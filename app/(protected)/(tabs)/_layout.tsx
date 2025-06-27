@@ -11,21 +11,17 @@ export default function TabsLayout() {
 		<Tabs
 			screenOptions={{
 				headerShown: false,
-				tabBarStyle: {
-					backgroundColor:
-						colorScheme === "dark"
-							? colors.dark.background
-							: colors.light.background,
-				},
-				tabBarActiveTintColor:
-					colorScheme === "dark"
-						? colors.dark.foreground
-						: colors.light.foreground,
-				tabBarShowLabel: false,
 			}}
 		>
 			<Tabs.Screen name="index" options={{ title: "Home" }} />
-			<Tabs.Screen name="settings" options={{ title: "Settings" }} />
+			<Tabs.Screen name="settings" options={{ title: "Profile" }} />
+			<Tabs.Screen
+				name="plus"
+				options={{
+					title: "Plus",
+					tabBarActiveTintColor: colors[colorScheme].primary,
+				}}
+			/>
 		</Tabs>
 	);
 }

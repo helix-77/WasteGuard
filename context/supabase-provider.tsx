@@ -10,6 +10,7 @@ import { SplashScreen, useRouter } from "expo-router";
 import { Session } from "@supabase/supabase-js";
 
 import { supabase } from "@/config/supabase";
+import { Alert } from "react-native";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -44,6 +45,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
 		if (error) {
 			console.error("Error signing up:", error);
+			Alert.alert("Error", error.message);
 			return;
 		}
 
@@ -52,6 +54,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
 			console.log("User signed up:", data.user);
 		} else {
 			console.log("No user returned from sign up");
+			Alert.alert("Error", "No user returned from sign up. Please try again.");
 		}
 	};
 
@@ -63,6 +66,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
 		if (error) {
 			console.error("Error signing in:", error);
+			Alert.alert("Login Failed", error.message, [{ text: "OK" }]);
 			return;
 		}
 
@@ -71,6 +75,11 @@ export function AuthProvider({ children }: PropsWithChildren) {
 			console.log("User signed in:", data.user);
 		} else {
 			console.log("No user returned from sign in");
+			Alert.alert(
+				"Login Failed",
+				"Please check your email and password and try again.",
+				[{ text: "OK" }],
+			);
 		}
 	};
 

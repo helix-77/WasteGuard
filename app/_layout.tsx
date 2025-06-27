@@ -4,7 +4,6 @@ import { Stack } from "expo-router";
 
 import { AuthProvider } from "@/context/supabase-provider";
 import { useColorScheme } from "@/lib/useColorScheme";
-import { colors } from "@/constants/colors";
 
 import {
 	Theme,
@@ -62,23 +61,8 @@ export default function RootLayout() {
 				<StatusBar style={isDarkColorScheme ? "light" : "dark"} />
 				<Stack screenOptions={{ headerShown: false, gestureEnabled: false }}>
 					<Stack.Screen name="(protected)" />
+					<Stack.Screen name="(auth)" />
 					<Stack.Screen name="welcome" />
-					<Stack.Screen
-						name="sign-up"
-						options={{
-							headerShown: true,
-							headerTitle: "Sign Up",
-							gestureEnabled: true,
-						}}
-					/>
-					<Stack.Screen
-						name="sign-in"
-						options={{
-							headerShown: true,
-							headerTitle: "Sign In",
-							gestureEnabled: true,
-						}}
-					/>
 				</Stack>
 			</ThemeProvider>
 		</AuthProvider>

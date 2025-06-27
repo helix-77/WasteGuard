@@ -20,7 +20,10 @@ export default function WelcomeScreen() {
 
 	return (
 		<SafeAreaView className="flex flex-1 bg-background p-4">
-			<ThemeToggle />
+			<View className="flex flex-row gap-2 justify-end pr-4">
+				<Muted> Change Theme</Muted>
+				<ThemeToggle />
+			</View>
 			<View className="flex flex-1 items-center justify-center gap-y-4 web:m-4">
 				<Image source={appIcon} className="w-16 h-16 rounded-xl" />
 				<H1 className="text-center">WasteGuard</H1>
