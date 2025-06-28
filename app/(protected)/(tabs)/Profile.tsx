@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
 import { H1, Muted } from "@/components/ui/typography";
 import { useAuth } from "@/context/supabase-provider";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 export default function Profile() {
 	const { signOut } = useAuth();
@@ -14,6 +15,9 @@ export default function Profile() {
 			<Muted className="text-center">
 				Sign out and return to the welcome screen.
 			</Muted>
+			<View className="w-full h-0.5 bg-border my-4">
+				<ThemeToggle />
+			</View>
 			<Button
 				className="w-full"
 				size="default"
