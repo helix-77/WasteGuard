@@ -1,5 +1,7 @@
 import React from "react";
 import { Tabs } from "expo-router";
+import { View } from "react-native";
+import { Home, User, Plus } from "lucide-react-native";
 
 import { useColorScheme } from "@/lib/useColorScheme";
 import { colors } from "@/constants/colors";
@@ -13,13 +15,44 @@ export default function TabsLayout() {
 				headerShown: false,
 			}}
 		>
-			<Tabs.Screen name="index" options={{ title: "Home" }} />
-			<Tabs.Screen name="settings" options={{ title: "Profile" }} />
 			<Tabs.Screen
-				name="plus"
+				name="home"
 				options={{
-					title: "Plus",
-					tabBarActiveTintColor: colors[colorScheme].primary,
+					title: "Home",
+					tabBarIcon: ({ color, size }) => <Home size={size} color={color} />,
+				}}
+			/>
+			<Tabs.Screen
+				name="plusTab"
+				options={{
+					title: "",
+					tabBarIcon: ({ color }) => (
+						<View
+							style={{
+								width: 56,
+								height: 56,
+								borderRadius: 28,
+								backgroundColor: colors[colorScheme].primary,
+								justifyContent: "center",
+								alignItems: "center",
+								marginBottom: 20,
+								shadowColor: colors[colorScheme].primary,
+								shadowOffset: { width: 0, height: 4 },
+								shadowOpacity: 0.3,
+								shadowRadius: 8,
+								elevation: 8,
+							}}
+						>
+							<Plus size={28} color={colors[colorScheme].background} />
+						</View>
+					),
+				}}
+			/>
+			<Tabs.Screen
+				name="profile"
+				options={{
+					title: "Profile",
+					tabBarIcon: ({ color, size }) => <User size={size} color={color} />,
 				}}
 			/>
 		</Tabs>

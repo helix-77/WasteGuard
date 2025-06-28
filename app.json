@@ -25,7 +25,7 @@
 				}
 			},
 			"icon": {
-				"dark": "./assets/icon-dark.png",
+				"dark": "./assets/icon.png",
 				"light": "./assets/icon.png"
 			},
 			"bundleIdentifier": "com.helix77.waste-guard"

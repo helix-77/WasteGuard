@@ -32,8 +32,6 @@ export {
 } from "expo-router";
 
 export default function RootLayout() {
-	// const { colorScheme } = useColorScheme();
-
 	const hasMounted = React.useRef(false);
 	const { colorScheme, isDarkColorScheme } = useColorScheme();
 	const [isColorSchemeLoaded, setIsColorSchemeLoaded] = React.useState(false);
@@ -59,10 +57,10 @@ export default function RootLayout() {
 		<AuthProvider>
 			<ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
 				<StatusBar style={isDarkColorScheme ? "light" : "dark"} />
-				<Stack screenOptions={{ headerShown: false, gestureEnabled: false }}>
-					<Stack.Screen name="(protected)" />
-					<Stack.Screen name="(auth)" />
+				<Stack screenOptions={{ headerShown: false }}>
 					<Stack.Screen name="welcome" />
+					<Stack.Screen name="(auth)" />
+					<Stack.Screen name="(protected)" />
 				</Stack>
 			</ThemeProvider>
 		</AuthProvider>

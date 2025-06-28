@@ -1,11 +1,14 @@
 import { Redirect, Stack } from "expo-router";
+import { useAuth } from "@/context/supabase-provider";
 
 const Layout = () => {
-	// const { isAuthenticated } = useAuth();
+	const { session } = useAuth();
+	// console.log(session);
 
-	// if (isAuthenticated) {
-	// 	return <Redirect href="/(tabs)/home" />;
-	// }
+	if (session) {
+		return <Redirect href="/home" />;
+	}
+
 	return (
 		<Stack>
 			<Stack.Screen
@@ -13,7 +16,7 @@ const Layout = () => {
 				options={{
 					headerShown: true,
 					headerTitle: "Sign Up",
-					gestureEnabled: true,
+					// gestureEnabled: true,
 					headerShadowVisible: false,
 				}}
 			/>

@@ -34,10 +34,11 @@ export default function SignIn() {
 		try {
 			await signIn(data.email, data.password);
 			form.reset();
+			router.replace("/home");
 		} catch (error: Error | any) {
 			console.error(error.message);
+			Alert.alert("Error", "Failed to sign in. Please check your credentials.");
 		}
-		router.replace("../Home");
 	}
 
 	return (

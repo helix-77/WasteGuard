@@ -65,7 +65,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
 		});
 
 		if (error) {
-			console.error("Error signing in:", error);
+			// console.error("Error signing in:", error);
 			Alert.alert("Login Failed", error.message, [{ text: "OK" }]);
 			return;
 		}
@@ -73,6 +73,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
 		if (data.session) {
 			setSession(data.session);
 			console.log("User signed in:", data.user);
+			router.replace("/(protected)/(tabs)/home");
 		} else {
 			console.log("No user returned from sign in");
 			Alert.alert(
@@ -110,7 +111,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
 		if (initialized) {
 			SplashScreen.hideAsync();
 			if (session) {
-				router.replace("/");
+				router.replace("/(protected)/(tabs)/home");
 			} else {
 				router.replace("/welcome");
 			}
