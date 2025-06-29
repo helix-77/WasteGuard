@@ -7,6 +7,8 @@ import {
 	TextInput,
 	TouchableOpacity,
 	Animated,
+	FlatList,
+	ListRenderItem,
 } from "react-native";
 import { SafeAreaView } from "@/components/safe-area-view";
 import { FlashList } from "@shopify/flash-list";
@@ -16,6 +18,7 @@ import {
 	RectButton,
 	GestureHandlerRootView,
 } from "react-native-gesture-handler";
+import ProductBottomsheet from "@/components/ProductBottomsheet";
 
 /**
  * Interface representing a product item
@@ -146,6 +149,11 @@ export default function Product() {
 
 	const [products, setProducts] = useState<ProductItem[]>(productList);
 
+	// State for bottom sheet
+	const [selectedProduct, setSelectedProduct] = useState<ProductItem | null>(
+		null,
+	);
+
 	// Keep track of open swipeable items to close them when another is opened
 	const swipeableRefs = useRef<Map<string, Swipeable>>(new Map());
 
@@ -154,6 +162,16 @@ export default function Product() {
 		setProducts((currentProducts) =>
 			currentProducts.filter((product) => product.id !== productId),
 		);
+	}, []);
+
+	// Function to handle product selection and open bottom sheet
+	const handleProductSelect = useCallback((product: ProductItem) => {
+		setSelectedProduct(product);
+	}, []);
+
+	// Function to close bottom sheet
+	const handleCloseBottomSheet = useCallback(() => {
+		setSelectedProduct(null);
 	}, []);
 
 	// Filter products based on search query and selected category
@@ -194,14 +212,11 @@ export default function Product() {
 					<RectButton
 						style={{
 							flex: 1,
-							// marginLeft: 3,
 							alignItems: "center",
 							justifyContent: "center",
 							backgroundColor: "#ef4444",
 							borderTopRightRadius: 16,
 							borderBottomRightRadius: 16,
-							// borderTopLeftRadius: 16,
-							// borderBottomLeftRadius: 16,
 						}}
 						onPress={() => handleDelete(item.id)}
 					>
@@ -216,8 +231,8 @@ export default function Product() {
 	/**
 	 * Renders a single product item
 	 */
-	const renderProductItem = useCallback(
-		({ item }: { item: ProductItem }) => {
+	const renderProductItem: ListRenderItem<ProductItem> = useCallback(
+		({ item }) => {
 			const isExpiringSoon = item.daysLeft <= 2;
 			const isExpired = item.daysLeft <= 0;
 
@@ -248,7 +263,7 @@ export default function Product() {
 				>
 					<TouchableOpacity
 						className="bg-card rounded-2xl p-4 mb-3 shadow-sm"
-						onPress={() => console.log(`Pressed product: ${item.name}`)}
+						onPress={() => handleProductSelect(item)}
 					>
 						<View className="flex-row justify-between items-center">
 							<View className="flex-1">
@@ -298,13 +313,13 @@ export default function Product() {
 				</Swipeable>
 			);
 		},
-		[handleDelete, renderRightActions],
+		[handleProductSelect, renderRightActions],
 	);
 
 	return (
 		<SafeAreaView className="flex-1 bg-background">
 			<GestureHandlerRootView style={{ flex: 1 }}>
-				<View className="px-4 py-2">
+				<View className="flex-1 px-4 py-2">
 					{/* Header with search toggle */}
 					<View className="flex-row justify-between items-center mb-6">
 						<View style={{ width: 20 }}>
@@ -376,7 +391,7 @@ export default function Product() {
 					</View>
 
 					{/* Products section */}
-					<View>
+					<View style={{ flex: 1 }}>
 						<Text className="text-lg font-semibold text-muted-foreground mb-3">
 							Items ({filteredProducts.length})
 						</Text>
@@ -389,19 +404,28 @@ export default function Product() {
 								</Text>
 							</View>
 						) : (
-							<View style={{ height: "90%", marginBottom: -20 }}>
-								<FlashList
-									data={filteredProducts}
-									renderItem={renderProductItem}
-									estimatedItemSize={100}
-									showsVerticalScrollIndicator={false}
-									keyExtractor={(item) => item.id}
-									contentContainerStyle={{ paddingBottom: 20 }}
-								/>
-							</View>
+							<FlatList
+								data={filteredProducts}
+								renderItem={renderProductItem}
+								keyExtractor={(item) => item.id}
+								showsVerticalScrollIndicator={false}
+								contentContainerStyle={{ paddingBottom: 20 }}
+								removeClippedSubviews={true}
+								maxToRenderPerBatch={10}
+								windowSize={10}
+								initialNumToRender={8}
+								updateCellsBatchingPeriod={100}
+								onEndReachedThreshold={0.1}
+							/>
 						)}
 					</View>
 				</View>
+
+				{/* Product bottom sheet */}
+				<ProductBottomsheet
+					product={selectedProduct}
+					onClose={handleCloseBottomSheet}
+				/>
 			</GestureHandlerRootView>
 		</SafeAreaView>
 	);
