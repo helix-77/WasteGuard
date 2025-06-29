@@ -8,7 +8,6 @@ import { SafeAreaView } from "@/components/safe-area-view";
 import { Button } from "@/components/ui/button";
 import { Form, FormField, FormInput } from "@/components/ui/form";
 import { Text } from "@/components/ui/text";
-import { H1 } from "@/components/ui/typography";
 import { useAuth } from "@/context/supabase-provider";
 
 const formSchema = z.object({
@@ -129,7 +128,9 @@ export default function SignIn() {
 					</View>
 
 					<View className="flex-row justify-center">
-						<Text className="text-gray-500 text-sm">Don't have account? </Text>
+						<Text className="text-gray-500 text-sm">
+							Don{`&apos`}t have account?{" "}
+						</Text>
 						<Link href="/sign-up" asChild>
 							<TouchableOpacity>
 								<Text className="text-primary font-semibold text-sm">

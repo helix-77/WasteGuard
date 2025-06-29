@@ -11,7 +11,6 @@ import {
 	ListRenderItem,
 } from "react-native";
 import { SafeAreaView } from "@/components/safe-area-view";
-import { FlashList } from "@shopify/flash-list";
 import { Search, X, AlertCircle, Trash2 } from "lucide-react-native";
 import {
 	Swipeable,
@@ -19,6 +18,7 @@ import {
 	GestureHandlerRootView,
 } from "react-native-gesture-handler";
 import ProductBottomsheet from "@/components/ProductBottomsheet";
+import { FlashList } from "@shopify/flash-list";
 
 /**
  * Interface representing a product item
@@ -146,6 +146,7 @@ export default function Product() {
 	const [showSearch, setShowSearch] = useState(false);
 	const [searchQuery, setSearchQuery] = useState("");
 	const [selectedCategory, setSelectedCategory] = useState("All");
+	const flashListRef = useRef<FlashList<ProductItem>>(null);
 
 	const [products, setProducts] = useState<ProductItem[]>(productList);
 
@@ -404,12 +405,14 @@ export default function Product() {
 								</Text>
 							</View>
 						) : (
-							<FlatList
+							<FlashList
+								ref={flashListRef}
 								data={filteredProducts}
 								renderItem={renderProductItem}
 								keyExtractor={(item) => item.id}
 								showsVerticalScrollIndicator={false}
 								contentContainerStyle={{ paddingBottom: 20 }}
+								estimatedItemSize={100} // ✅ Important for performance
 								removeClippedSubviews={true}
 								maxToRenderPerBatch={10}
 								windowSize={10}

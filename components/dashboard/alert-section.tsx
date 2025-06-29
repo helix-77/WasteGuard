@@ -4,7 +4,7 @@ import { FlashList } from "@shopify/flash-list";
 import { Card, CardContent } from "@/components/ui/card";
 import { Text } from "@/components/ui/text";
 import { Badge } from "@/components/ui/badge";
-import { AlertIcon, ClockIcon } from "@/components/icons";
+import { ClockIcon } from "@/components/icons";
 
 interface AlertItem {
 	id: string;

@@ -1,12 +1,10 @@
 import React from "react";
-import { View, ScrollView, Text } from "react-native";
+import { View, ScrollView } from "react-native";
 import { SafeAreaView } from "@/components/safe-area-view";
 import { H1, Muted } from "@/components/ui/typography";
 import { StatsCard } from "@/components/dashboard/stats-card";
 import { RecentItems } from "@/components/dashboard/recent-items";
 import { AlertSection } from "@/components/dashboard/alert-section";
-import { ActionButtons } from "@/components/dashboard/action-buttons";
-import { Button } from "@/components/ui/button";
 
 // Dummy data for demonstration
 const mockStats = {
@@ -121,16 +119,6 @@ const mockAlerts = [
 ];
 
 export default function Home() {
-	const handleAddItem = () => {
-		// TODO: Navigate to add item screen
-		console.log("Add item pressed");
-	};
-
-	const handleViewRecipes = () => {
-		// TODO: Navigate to recipes screen
-		console.log("View recipes pressed");
-	};
-
 	const handleStatsPress = (statType: string) => {
 		// TODO: Navigate to detailed stats view
 		console.log(`${statType} stats pressed`);

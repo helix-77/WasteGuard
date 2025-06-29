@@ -1,14 +1,7 @@
 import React from "react";
 import { Tabs } from "expo-router";
 import { View } from "react-native";
-import {
-	Home,
-	User,
-	Plus,
-	ListChecks,
-	ShoppingBasket,
-	ShoppingBag,
-} from "lucide-react-native";
+import { Home, User, Plus, ShoppingBag } from "lucide-react-native";
 
 import { useColorScheme } from "@/lib/useColorScheme";
 import { colors } from "@/constants/colors";
