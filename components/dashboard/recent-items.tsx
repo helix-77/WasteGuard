@@ -36,13 +36,13 @@ export function RecentItems({ items, onItemPress }: RecentItemsProps) {
 
 	const handleViewAllProducts = () => {
 		// Handle view all products action
-		router.push("/screens/productList");
+		router.push("/productList");
 	};
 
 	return (
 		<View className="mt-6">
 			<View className="flex-row items-center justify-between mb-4">
-				<Text className="text-lg font-semibold text-foreground">
+				<Text className="font-semibold text-muted-foreground">
 					Recently Added
 				</Text>
 				<TouchableOpacity onPress={handleViewAllProducts}>

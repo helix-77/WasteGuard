@@ -3,7 +3,7 @@ import { router, Stack } from "expo-router";
 const Layout = () => {
 	return (
 		<Stack>
-			<Stack.Screen
+			{/* <Stack.Screen
 				name="productList"
 				options={{
 					headerShown: true,
@@ -11,7 +11,7 @@ const Layout = () => {
 					// headerBackTitle: "Back",
 					headerShadowVisible: false,
 				}}
-			/>
+			/> */}
 		</Stack>
 	);
 };

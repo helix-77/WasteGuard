@@ -65,7 +65,7 @@ export function AlertSection({
 
 	const renderAlertItem = ({ item: alert }: { item: AlertItem }) => (
 		<Pressable onPress={() => onAlertPress?.(alert)} className="mb-3">
-			<Card className="border-red-100 bg-red-50 dark:border-red-900 dark:bg-red-950">
+			<Card className=" border-red-100 bg-red-50 dark:border-red-900 dark:bg-[#450a0a5c]">
 				<CardContent className="p-4">
 					<View className="flex-row items-center justify-between">
 						<View className="flex-1">
@@ -122,11 +122,11 @@ export function AlertSection({
 	}
 
 	return (
-		<View className="mt-6">
+		<View className="mt-6 ">
 			<View className="flex-row items-center justify-between mb-4">
 				<View className="flex-row items-center">
-					<AlertIcon size={20} color="#dc2626" />
-					<Text className="text-lg font-semibold text-foreground ml-2">
+					{/* <AlertIcon size={20} color="#dc2626" /> */}
+					<Text className="font-semibold text-muted-foreground">
 						Expiring Soon
 					</Text>
 					<Badge variant="destructive" className="ml-2">

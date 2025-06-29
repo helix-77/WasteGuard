@@ -159,7 +159,7 @@ export default function Home() {
 						<H1 className="text-3xl font-bold text-foreground mb-2">
 							Good morning! 🌱
 						</H1>
-						<Muted className="text-lg">
+						<Muted className="text-base">
 							Let&apos;s keep track of your items and reduce waste together
 						</Muted>
 					</View>
