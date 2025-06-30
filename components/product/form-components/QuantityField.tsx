@@ -50,7 +50,7 @@ export default function QuantityField({
 									onChange(Math.min(999, Math.max(1, num)));
 								}}
 								onBlur={onBlur}
-								className="flex-1 text-center bg-muted rounded-none text-primary font-bold"
+								className="flex-1 text-center bg-muted rounded-none"
 								editable={!isLoading}
 							/>
 							<TouchableOpacity

@@ -30,7 +30,7 @@ export default function NotesField({
 							value={value}
 							onChangeText={onChange}
 							onBlur={onBlur}
-							className="rounded-lg bg-muted min-h-20 placeholder:text-muted-foreground/50"
+							className="rounded-2xl bg-muted min-h-20 placeholder:text-muted-foreground/50"
 							editable={!isLoading}
 							maxLength={500}
 						/>

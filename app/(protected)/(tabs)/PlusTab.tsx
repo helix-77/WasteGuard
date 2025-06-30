@@ -1,3 +1,5 @@
+//! Quick Scan Feature is optional
+
 import React, { useState, useCallback, useMemo } from "react";
 import { View, Alert, ScrollView } from "react-native";
 import { SafeAreaView } from "../../../components/safe-area-view";
@@ -186,7 +188,14 @@ export default function PlusTab() {
 							{renderScanStatus()}
 
 							<View className="flex-row justify-between items-center mb-4">
-								<H4 className="text-gray-900 dark:text-gray-100">Quick Scan</H4>
+								<View className="flex-row items-center">
+									<H4 className="text-gray-900 dark:text-gray-100">
+										Quick Scan
+									</H4>
+									<Text className="text-xs text-muted-foreground ml-1">
+										(optional)
+									</Text>
+								</View>
 								<View className="flex-row items-center">
 									{hasBarcodeData && (
 										<View className="flex-row items-center mr-3">
