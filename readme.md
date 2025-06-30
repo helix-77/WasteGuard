@@ -1,4 +1,6 @@
-# 🛡️ WasteGuard
+<img src="./assets/icon.png" width="90" height="90" alt="app icon">
+
+# WasteGuard
 
 **WasteGuard** is a modern mobile app built with **React Native (Expo)** that helps users reduce grocerie, cosmetics and food waste by tracking pantry items, monitoring expiry dates, and suggesting food recipes based on soon-to-expire ingredients.  
 
