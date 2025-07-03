@@ -89,20 +89,6 @@ export default function CameraScanner({
 					flash={flash ? "on" : "off"}
 				/>
 
-				{/* Header with close button - positioned absolutely */}
-				<View style={styles.header}>
-					<Button
-						variant="ghost"
-						size="sm"
-						onPress={onClose}
-						style={styles.closeButton}
-					>
-						<X size={24} color="#fff" />
-					</Button>
-					<Text style={styles.headerText}>Take Photo</Text>
-					<View style={styles.headerSpacer} />
-				</View>
-
 				{/* Bottom controls - positioned absolutely */}
 				<View style={styles.bottomControls}>
 					<View style={styles.controlsRow}>
@@ -132,19 +118,17 @@ export default function CameraScanner({
 							<Camera size={32} color="#fff" />
 						</Button>
 
-						{/* Camera flip */}
+						{/* close button */}
+
 						<Button
 							variant="ghost"
 							size="sm"
-							onPress={toggleCameraFacing}
+							onPress={onClose}
 							style={styles.controlButton}
 						>
-							<RotateCcw size={24} color="#fff" />
+							<X size={24} color="#fff" />
 						</Button>
 					</View>
-
-					{/* Mode indicator */}
-					<Text style={styles.modeIndicator}>Photo Mode</Text>
 				</View>
 			</SafeAreaView>
 		</View>
@@ -192,12 +176,6 @@ const styles = StyleSheet.create({
 		paddingTop: 10,
 		paddingBottom: 20,
 		backgroundColor: "rgba(0, 0, 0, 0.3)",
-	},
-	closeButton: {
-		width: 40,
-		height: 40,
-		borderRadius: 20,
-		backgroundColor: "rgba(0, 0, 0, 0.5)",
 	},
 	headerText: {
 		color: "#fff",

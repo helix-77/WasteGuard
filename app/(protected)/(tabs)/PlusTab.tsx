@@ -1,7 +1,7 @@
 //! Quick Scan Feature integrated with CameraScanner
 
 import React, { useState, useCallback, useMemo } from "react";
-import { View, Alert, ScrollView, Image } from "react-native";
+import { View, Alert, ScrollView, Image, Keyboard } from "react-native";
 import { SafeAreaView } from "../../../components/safe-area-view";
 import { Text } from "../../../components/ui/text";
 import { Button } from "../../../components/ui/button";
@@ -22,6 +22,7 @@ interface ScanStatus {
 export default function PlusTab() {
 	const router = useRouter();
 	const [showCamera, setShowCamera] = useState(false);
+
 	const [scanStatus, setScanStatus] = useState<ScanStatus>({
 		image: null,
 		isComplete: false,
@@ -39,6 +40,7 @@ export default function PlusTab() {
 
 	// Camera handlers
 	const handleOpenCamera = useCallback(() => {
+		Keyboard.dismiss();
 		setShowCamera(true);
 	}, []);
 
