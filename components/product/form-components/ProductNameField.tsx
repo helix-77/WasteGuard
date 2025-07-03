@@ -43,6 +43,10 @@ export default function ProductNameField({
 							onBlur={onBlur}
 							className={`${error ? "border-red-500" : "bg-muted"} rounded-xl placeholder:text-muted-foreground/50`}
 							editable={!isLoading}
+							returnKeyType="next"
+							autoCapitalize="words"
+							autoCorrect={true}
+							blurOnSubmit={false}
 						/>
 						{error && (
 							<Text className="text-red-500 text-xs mt-1 ml-1">

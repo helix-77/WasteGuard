@@ -1,21 +1,20 @@
-//! Quick Scan Feature is optional
+//! Quick Scan Feature integrated with CameraScanner
 
 import React, { useState, useCallback, useMemo } from "react";
-import { View, Alert, ScrollView } from "react-native";
+import { View, Alert, ScrollView, Image } from "react-native";
 import { SafeAreaView } from "../../../components/safe-area-view";
 import { Text } from "../../../components/ui/text";
 import { Button } from "../../../components/ui/button";
-import ProductCamera from "../../../components/product/ProductCamera";
 import ProductForm, {
 	ProductFormData,
 } from "../../../components/product/ProductForm";
 import { Card } from "../../../components/ui/card";
-import { Camera, Scan, CheckCircle, AlertCircle } from "lucide-react-native";
+import { Camera, CheckCircle, AlertCircle } from "lucide-react-native";
 import { H4, Muted } from "../../../components/ui/typography";
 import { useRouter } from "expo-router";
+import CameraScanner from "@/components/product/CameraScanner";
 
 interface ScanStatus {
-	barcode: string | null;
 	image: string | null;
 	isComplete: boolean;
 }
@@ -24,62 +23,52 @@ export default function PlusTab() {
 	const router = useRouter();
 	const [showCamera, setShowCamera] = useState(false);
 	const [scanStatus, setScanStatus] = useState<ScanStatus>({
-		barcode: null,
 		image: null,
 		isComplete: false,
 	});
 	const [isLoading, setIsLoading] = useState(false);
 
 	// Memoized computed values
-	const hasBarcodeData = useMemo(
-		() => Boolean(scanStatus.barcode),
-		[scanStatus.barcode],
-	);
 	const hasImageData = useMemo(
 		() => Boolean(scanStatus.image),
 		[scanStatus.image],
 	);
 	const scanProgress = useMemo(() => {
-		let progress = 0;
-		if (hasBarcodeData) progress += 50;
-		if (hasImageData) progress += 50;
-		return progress;
-	}, [hasBarcodeData, hasImageData]);
+		return hasImageData ? 100 : 0;
+	}, [hasImageData]);
 
-	// Optimized camera handlers with useCallback
+	// Camera handlers
 	const handleOpenCamera = useCallback(() => {
 		setShowCamera(true);
-	}, []);
-
-	const handleBarcodeScanned = useCallback((barcodeData: string) => {
-		setScanStatus((prev) => ({
-			...prev,
-			barcode: barcodeData,
-			isComplete: Boolean(prev.image), // Complete if image already exists
-		}));
-
-		// Optional: Fetch product details from barcode API
-		// fetchProductDetails(barcodeData);
-		console.log("Barcode scanned:", barcodeData);
-	}, []);
-
-	const handleImageCaptured = useCallback((imageUri: string) => {
-		setScanStatus((prev) => ({
-			...prev,
-			image: imageUri,
-			isComplete: Boolean(prev.barcode), // Complete if barcode already exists
-		}));
-		setShowCamera(false);
 	}, []);
 
 	const handleCloseCamera = useCallback(() => {
 		setShowCamera(false);
 	}, []);
 
+	const handleImageCaptured = useCallback((imageUri: string) => {
+		setScanStatus((prev) => ({
+			...prev,
+			image: imageUri,
+			isComplete: true, // Complete when image is captured
+		}));
+
+		// Show success alert
+		Alert.alert("Photo Captured! ✓", "Photo has been saved successfully.", [
+			{
+				text: "Continue",
+				onPress: () => {
+					setShowCamera(false);
+				},
+			},
+		]);
+
+		console.log("Image captured:", imageUri);
+	}, []);
+
 	// Reset scan data
 	const handleResetScan = useCallback(() => {
 		setScanStatus({
-			barcode: null,
 			image: null,
 			isComplete: false,
 		});
@@ -97,7 +86,6 @@ export default function PlusTab() {
 				const productWithImage = {
 					...productData,
 					imageUri: scanStatus.image,
-					barcode: scanStatus.barcode || productData.barcode,
 				};
 
 				// TODO: Replace with actual Supabase integration
@@ -113,7 +101,6 @@ export default function PlusTab() {
 							style: "default",
 							onPress: () => {
 								setScanStatus({
-									barcode: null,
 									image: null,
 									isComplete: false,
 								});
@@ -165,101 +152,98 @@ export default function PlusTab() {
 		</View>
 	);
 
+	// Render captured image preview
+	const renderImagePreview = () => {
+		if (!hasImageData) return null;
+
+		return (
+			<View className="mb-4">
+				<Text className="text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+					Captured Image:
+				</Text>
+				<Image
+					source={{ uri: scanStatus.image! }}
+					className="w-full h-48 rounded-lg"
+					resizeMode="cover"
+				/>
+			</View>
+		);
+	};
+
 	return (
 		<SafeAreaView className="flex-1">
-			{showCamera ? (
-				<ProductCamera
-					onBarcodeScanned={handleBarcodeScanned}
-					onImageCaptured={handleImageCaptured}
-					onClose={handleCloseCamera}
-				/>
-			) : (
-				<ScrollView
-					className="flex-1"
-					showsVerticalScrollIndicator={false}
-					keyboardShouldPersistTaps="handled"
-				>
-					<View className="p-4">
-						<H4 className="mb-6 text-center text-gray-900 dark:text-gray-100">
-							New Item
-						</H4>
+			<ScrollView
+				className="flex-1"
+				showsVerticalScrollIndicator={false}
+				keyboardShouldPersistTaps="handled"
+			>
+				<View className="p-4">
+					<H4 className="mb-6 text-center text-gray-900 dark:text-gray-100">
+						New Item
+					</H4>
 
-						<Card className="mb-6 p-5 shadow-sm">
-							{renderScanStatus()}
+					<Card className="mb-6 p-5 shadow-sm">
+						{renderScanStatus()}
 
-							<View className="flex-row justify-between items-center mb-4">
-								<View className="flex-row items-center">
-									<H4 className="text-gray-900 dark:text-gray-100">
-										Quick Scan
-									</H4>
-									<Text className="text-xs text-muted-foreground ml-1">
-										(optional)
+						<View className="flex-row justify-between items-center mb-4">
+							<View className="flex-row items-center">
+								<H4 className="text-gray-900 dark:text-gray-100">Quick Scan</H4>
+								<Text className="text-xs text-muted-foreground ml-1">
+									(optional)
+								</Text>
+							</View>
+							<View className="flex-row items-center">
+								{hasImageData && (
+									<View className="flex-row items-center">
+										<CheckCircle size={16} color="#22c55e" />
+										<Muted className="ml-1 text-green-600">Photo ✓</Muted>
+									</View>
+								)}
+								{!hasImageData && (
+									<Muted className="text-gray-500">Ready to scan</Muted>
+								)}
+							</View>
+						</View>
+
+						<Text className="mb-4 text-gray-600 dark:text-gray-400 leading-5">
+							Take a photo to help identify your items later.
+						</Text>
+
+						{/* Show captured data */}
+						{renderImagePreview()}
+
+						<View className="flex-row gap-3 mb-4">
+							<Button
+								className="flex-1 bg-green-600 active:bg-green-700"
+								onPress={() => handleOpenCamera("photo")}
+								disabled={isLoading}
+							>
+								<View className="flex-row items-center justify-center">
+									<Camera size={18} color="#fff" />
+									<Text className="text-white font-medium ml-2">
+										{hasImageData ? "Retake Photo" : "Take Photo"}
 									</Text>
 								</View>
-								<View className="flex-row items-center">
-									{hasBarcodeData && (
-										<View className="flex-row items-center mr-3">
-											<CheckCircle size={16} color="#22c55e" />
-											<Muted className="ml-1 text-green-600">Barcode ✓</Muted>
-										</View>
-									)}
-									{hasImageData && (
-										<View className="flex-row items-center">
-											<CheckCircle size={16} color="#22c55e" />
-											<Muted className="ml-1 text-green-600">Photo ✓</Muted>
-										</View>
-									)}
-									{!hasBarcodeData && !hasImageData && (
-										<Muted className="text-gray-500">Ready to scan</Muted>
-									)}
-								</View>
-							</View>
+							</Button>
+						</View>
+					</Card>
 
-							<Text className="mb-4 text-gray-600 dark:text-gray-400 leading-5">
-								Scan the barcode to auto-fill product details and take a photo
-								to help identify your items later.
-							</Text>
+					{/* Product Form */}
+					<ProductForm
+						initialImageUri={scanStatus.image || undefined}
+						onSave={handleSaveProduct}
+						onOpenCamera={() => handleOpenCamera}
+						isLoading={isLoading}
+					/>
+				</View>
+			</ScrollView>
 
-							<View className="flex-row gap-3">
-								<Button
-									className="flex-1 bg-green-600 active:bg-green-700"
-									onPress={handleOpenCamera}
-									disabled={isLoading}
-								>
-									<View className="flex-row items-center justify-center">
-										<Camera size={18} color="#fff" />
-										<Text className="text-white font-medium ml-2">
-											{hasImageData ? "Retake Photo" : "Take Photo"}
-										</Text>
-									</View>
-								</Button>
-								<Button
-									className="flex-1 border-green-600"
-									variant="outline"
-									onPress={handleOpenCamera}
-									disabled={isLoading}
-								>
-									<View className="flex-row items-center justify-center">
-										<Scan size={18} color="#16a34a" />
-										<Text className="text-green-600 font-medium ml-2">
-											{hasBarcodeData ? "Rescan" : "Scan Code"}
-										</Text>
-									</View>
-								</Button>
-							</View>
-						</Card>
-
-						{/* Product Form */}
-						<ProductForm
-							initialBarcode={scanStatus.barcode || undefined}
-							initialImageUri={scanStatus.image || undefined}
-							onSave={handleSaveProduct}
-							onOpenCamera={handleOpenCamera}
-							isLoading={isLoading}
-						/>
-					</View>
-				</ScrollView>
-			)}
+			{/* Camera Scanner Modal */}
+			<CameraScanner
+				isVisible={showCamera}
+				onClose={handleCloseCamera}
+				onImageCaptured={handleImageCaptured}
+			/>
 		</SafeAreaView>
 	);
 }

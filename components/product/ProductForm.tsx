@@ -4,7 +4,6 @@ import { useForm } from "react-hook-form";
 
 import {
 	ProductNameField,
-	BarcodeField,
 	CategoryField,
 	ExpiryDateField,
 	QuantityField,
@@ -14,7 +13,6 @@ import {
 } from "./form-components";
 
 interface ProductFormProps {
-	initialBarcode?: string;
 	initialImageUri?: string;
 	onSave: (data: ProductFormData) => void;
 	onOpenCamera: () => void;
@@ -23,7 +21,6 @@ interface ProductFormProps {
 
 export interface ProductFormData {
 	name: string;
-	barcode?: string;
 	category: string;
 	expiryDate: Date;
 	quantity: number;
@@ -32,7 +29,6 @@ export interface ProductFormData {
 }
 
 export default function ProductForm({
-	initialBarcode,
 	initialImageUri,
 	onSave,
 	onOpenCamera,
@@ -77,7 +73,6 @@ export default function ProductForm({
 		mode: "onChange", // Real-time validation
 		defaultValues: {
 			name: "",
-			barcode: initialBarcode || "",
 			category: "",
 			expiryDate: defaultExpiryDate,
 			quantity: 1,
@@ -88,13 +83,6 @@ export default function ProductForm({
 
 	// Watch form values for dynamic updates
 	const watchedExpiryDate = watch("expiryDate");
-
-	// Update form when props change
-	useEffect(() => {
-		if (initialBarcode) {
-			setValue("barcode", initialBarcode);
-		}
-	}, [initialBarcode, setValue]);
 
 	useEffect(() => {
 		if (initialImageUri) {
@@ -168,13 +156,6 @@ export default function ProductForm({
 				<ProductNameField
 					control={control}
 					error={errors.name}
-					isLoading={isLoading}
-				/>
-
-				{/* Barcode Field */}
-				<BarcodeField
-					control={control}
-					onOpenCamera={onOpenCamera}
 					isLoading={isLoading}
 				/>
 
