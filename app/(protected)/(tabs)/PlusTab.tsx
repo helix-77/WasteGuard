@@ -1,18 +1,20 @@
 //! Quick Scan Feature integrated with CameraScanner
 
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo, useRef } from "react";
 import { View, Alert, ScrollView, Image, Keyboard } from "react-native";
 import { SafeAreaView } from "../../../components/safe-area-view";
 import { Text } from "../../../components/ui/text";
 import { Button } from "../../../components/ui/button";
 import ProductForm, {
 	ProductFormData,
+	ProductFormRef,
 } from "../../../components/product/ProductForm";
 import { Card } from "../../../components/ui/card";
 import { Camera, CheckCircle, AlertCircle } from "lucide-react-native";
 import { H4, Muted } from "../../../components/ui/typography";
 import { useRouter } from "expo-router";
 import CameraScanner from "@/components/product/CameraScanner";
+import { useCameraContext } from "@/context/camera-context";
 
 interface ScanStatus {
 	image: string | null;
@@ -21,7 +23,9 @@ interface ScanStatus {
 
 export default function PlusTab() {
 	const router = useRouter();
+	const productFormRef = useRef<ProductFormRef>(null);
 	const [showCamera, setShowCamera] = useState(false);
+	const { setIsCameraOpen } = useCameraContext();
 
 	const [scanStatus, setScanStatus] = useState<ScanStatus>({
 		image: null,
@@ -42,31 +46,37 @@ export default function PlusTab() {
 	const handleOpenCamera = useCallback(() => {
 		Keyboard.dismiss();
 		setShowCamera(true);
-	}, []);
+		setIsCameraOpen(true);
+	}, [setIsCameraOpen]);
 
 	const handleCloseCamera = useCallback(() => {
 		setShowCamera(false);
-	}, []);
+		setIsCameraOpen(false);
+	}, [setIsCameraOpen]);
 
-	const handleImageCaptured = useCallback((imageUri: string) => {
-		setScanStatus((prev) => ({
-			...prev,
-			image: imageUri,
-			isComplete: true, // Complete when image is captured
-		}));
+	const handleImageCaptured = useCallback(
+		(imageUri: string) => {
+			setScanStatus((prev) => ({
+				...prev,
+				image: imageUri,
+				isComplete: true, // Complete when image is captured
+			}));
 
-		// Show success alert
-		Alert.alert("Photo Captured! ✓", "Photo has been saved successfully.", [
-			{
-				text: "Continue",
-				onPress: () => {
-					setShowCamera(false);
+			// Show success alert
+			Alert.alert("Photo Captured!", "Photo has been saved successfully.", [
+				{
+					text: "Continue",
+					onPress: () => {
+						setShowCamera(false);
+						setIsCameraOpen(false);
+					},
 				},
-			},
-		]);
+			]);
 
-		console.log("Image captured:", imageUri);
-	}, []);
+			// console.log("Image captured:", imageUri);
+		},
+		[setIsCameraOpen],
+	);
 
 	// Reset scan data
 	const handleResetScan = useCallback(() => {
@@ -95,7 +105,7 @@ export default function PlusTab() {
 				console.log("Saving product:", productWithImage);
 
 				Alert.alert(
-					"Success! 🎉",
+					"Success!",
 					"Your product has been added to your inventory.",
 					[
 						{
@@ -106,13 +116,17 @@ export default function PlusTab() {
 									image: null,
 									isComplete: false,
 								});
+								// Reset the form
+								productFormRef.current?.resetForm();
 							},
 						},
 						{
 							text: "View Inventory",
 							style: "default",
 							onPress: () => {
-								router.push("/(protected)/(tabs)/home");
+								// Reset the form
+								productFormRef.current?.resetForm();
+								router.push("/products");
 							},
 						},
 					],
@@ -217,7 +231,7 @@ export default function PlusTab() {
 						<View className="flex-row gap-3 mb-4">
 							<Button
 								className="flex-1 bg-green-600 active:bg-green-700"
-								onPress={() => handleOpenCamera("photo")}
+								onPress={handleOpenCamera}
 								disabled={isLoading}
 							>
 								<View className="flex-row items-center justify-center">
@@ -232,6 +246,7 @@ export default function PlusTab() {
 
 					{/* Product Form */}
 					<ProductForm
+						ref={productFormRef}
 						initialImageUri={scanStatus.image || undefined}
 						onSave={handleSaveProduct}
 						onOpenCamera={() => handleOpenCamera}

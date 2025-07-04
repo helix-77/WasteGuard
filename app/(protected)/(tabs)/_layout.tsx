@@ -5,14 +5,17 @@ import { Home, User, Plus, ShoppingBag } from "lucide-react-native";
 
 import { useColorScheme } from "@/lib/useColorScheme";
 import { colors } from "@/constants/colors";
+import { useCameraContext } from "@/context/camera-context";
 
 export default function TabsLayout() {
 	const { colorScheme } = useColorScheme();
+	const { isCameraOpen } = useCameraContext();
 
 	return (
 		<Tabs
 			screenOptions={{
 				headerShown: false,
+				tabBarStyle: isCameraOpen ? { display: "none" } : {},
 			}}
 		>
 			<Tabs.Screen
@@ -22,15 +25,7 @@ export default function TabsLayout() {
 					tabBarIcon: ({ color, size }) => <Home size={size} color={color} />,
 				}}
 			/>
-			<Tabs.Screen
-				name="products"
-				options={{
-					title: "Products",
-					tabBarIcon: ({ color, size }) => (
-						<ShoppingBag size={size} color={color} />
-					),
-				}}
-			/>
+
 			<Tabs.Screen
 				name="plusTab"
 				options={{
@@ -58,12 +53,21 @@ export default function TabsLayout() {
 				}}
 			/>
 			<Tabs.Screen
+				name="products"
+				options={{
+					title: "Products",
+					tabBarIcon: ({ color, size }) => (
+						<ShoppingBag size={size} color={color} />
+					),
+				}}
+			/>
+			{/* <Tabs.Screen
 				name="profile"
 				options={{
 					title: "Profile",
 					tabBarIcon: ({ color, size }) => <User size={size} color={color} />,
 				}}
-			/>
+			/> */}
 		</Tabs>
 	);
 }

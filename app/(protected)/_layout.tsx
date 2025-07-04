@@ -1,6 +1,7 @@
 import { Redirect, Stack } from "expo-router";
 
 import { useAuth } from "@/context/supabase-provider";
+import { CameraProvider } from "@/context/camera-context";
 
 export const unstable_settings = {
 	initialRouteName: "(tabs)",
@@ -18,12 +19,19 @@ export default function ProtectedLayout() {
 	}
 
 	return (
-		<Stack
-			screenOptions={{
-				headerShown: false,
-			}}
-		>
-			<Stack.Screen name="(tabs)" />
-		</Stack>
+		<CameraProvider>
+			<Stack>
+				<Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+				<Stack.Screen
+					name="screens"
+					options={{
+						headerShown: true,
+						headerTitle: "Profile",
+						headerShadowVisible: false,
+						headerBackTitle: "Back",
+					}}
+				/>
+			</Stack>
+		</CameraProvider>
 	);
 }

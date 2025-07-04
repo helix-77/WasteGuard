@@ -11,7 +11,17 @@ import {
 	ListRenderItem,
 } from "react-native";
 import { SafeAreaView } from "@/components/safe-area-view";
-import { Search, X, AlertCircle, Trash2 } from "lucide-react-native";
+import {
+	Search,
+	X,
+	AlertCircle,
+	Trash2,
+	User,
+	CircleUser,
+	UserCog,
+	User2,
+	UserCog2,
+} from "lucide-react-native";
 import {
 	Swipeable,
 	RectButton,
@@ -19,6 +29,7 @@ import {
 } from "react-native-gesture-handler";
 import ProductBottomsheet from "@/components/ProductBottomsheet";
 import { FlashList } from "@shopify/flash-list";
+import { router } from "expo-router";
 
 /**
  * Interface representing a product item
@@ -323,18 +334,23 @@ export default function Product() {
 				<View className="flex-1 px-4 py-2">
 					{/* Header with search toggle */}
 					<View className="flex-row justify-between items-center mb-6">
-						<View style={{ width: 20 }}>
-							<Text>{/* Spacer for balance */}</Text>
-						</View>
 						<Text className="text-2xl font-bold text-foreground text-center">
 							Products
 						</Text>
-						<TouchableOpacity
-							onPress={() => setShowSearch(!showSearch)}
-							className="p-2 rounded-full"
-						>
-							<Search size={20} strokeWidth={3.5} color="#6b7280" />
-						</TouchableOpacity>
+						<View className="flex-row items-center gap-x-2">
+							<TouchableOpacity
+								onPress={() => setShowSearch(!showSearch)}
+								className="p-2 rounded-full"
+							>
+								<Search size={20} strokeWidth={3.5} color="#6b7280" />
+							</TouchableOpacity>
+							<TouchableOpacity
+								onPress={() => router.push("/(protected)/screens/profile")}
+								className="p-2 rounded-full"
+							>
+								<UserCog size={20} strokeWidth={3} color="#6b7280" />
+							</TouchableOpacity>
+						</View>
 					</View>
 
 					{/* Search bar */}
