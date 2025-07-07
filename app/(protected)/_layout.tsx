@@ -29,6 +29,7 @@ export default function ProtectedLayout() {
 						headerTitle: "Profile",
 						headerShadowVisible: false,
 						headerBackTitle: "Back",
+						headerBackground: () => null,
 					}}
 				/>
 			</Stack>

@@ -7,11 +7,6 @@ const Layout = () => {
 				name="profile"
 				options={{
 					headerShown: false,
-					headerTitle: "Profile",
-					headerShadowVisible: false,
-					// headerStyle: {
-					// 	backgroundColor: "#fff",
-					// },
 				}}
 			/>
 		</Stack>
