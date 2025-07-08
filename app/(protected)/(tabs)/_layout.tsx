@@ -16,6 +16,13 @@ export default function TabsLayout() {
 			screenOptions={{
 				headerShown: false,
 				tabBarStyle: isCameraOpen ? { display: "none" } : {},
+				animation: "shift", // Tab animation
+				transitionSpec: {
+					animation: "timing",
+					config: {
+						duration: 250,
+					},
+				},
 			}}
 		>
 			<Tabs.Screen

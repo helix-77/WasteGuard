@@ -345,7 +345,7 @@ export default function Product() {
 								<Search size={20} strokeWidth={3.5} color="#6b7280" />
 							</TouchableOpacity>
 							<TouchableOpacity
-								onPress={() => router.push("/(protected)/screens/profile")}
+								onPress={() => router.push("../profile")}
 								className="p-2 rounded-full"
 							>
 								<UserCog size={20} strokeWidth={3} color="#6b7280" />

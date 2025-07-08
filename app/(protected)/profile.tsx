@@ -25,6 +25,7 @@ import {
 	Headphones,
 	Heart,
 } from "@/lib/icons/profileIcons";
+import { router } from "expo-router";
 
 const Profile: React.FC = () => {
 	const { session, signOut } = useAuth();
@@ -83,7 +84,7 @@ const Profile: React.FC = () => {
 			title: "Edit Profile",
 			icon: <User size={20} className="text-foreground" />,
 			onPress: () => {
-				// TODO: Navigate to edit profile screen
+				router.push("/profileScreens/editProfile");
 				console.log("Edit profile pressed");
 			},
 			showChevron: true,
@@ -92,7 +93,7 @@ const Profile: React.FC = () => {
 			title: "Edit Login Credentials",
 			icon: <Key size={20} className="text-foreground" />,
 			onPress: () => {
-				// TODO: Navigate to credentials edit screen
+				router.push("/profileScreens/editCredentials");
 				console.log("Edit credentials pressed");
 			},
 			showChevron: true,
@@ -101,7 +102,7 @@ const Profile: React.FC = () => {
 			title: "About",
 			icon: <Info size={20} className="text-foreground" />,
 			onPress: () => {
-				// TODO: Navigate to about screen
+				router.push("/profileScreens/about");
 				console.log("About pressed");
 			},
 			showChevron: true,
@@ -110,7 +111,7 @@ const Profile: React.FC = () => {
 			title: "Privacy Policy",
 			icon: <Shield size={20} className="text-foreground" />,
 			onPress: () => {
-				// TODO: Navigate to privacy policy screen
+				router.push("/profileScreens/privacyPolicy");
 				console.log("Privacy policy pressed");
 			},
 			showChevron: true,
@@ -132,20 +133,22 @@ const Profile: React.FC = () => {
 	};
 
 	return (
-		<ScrollView className="flex-1 mt-6 mb-6">
-			<ProfileHeader name={userName} email={userEmail} plan={userPlan} />
+		<>
+			<ScrollView className="flex-1 mt-6 mb-6">
+				<ProfileHeader name={userName} email={userEmail} plan={userPlan} />
 
-			<PremiumSection
-				features={premiumFeatures}
-				onUpgrade={handlePremiumUpgrade}
-			/>
+				<PremiumSection
+					features={premiumFeatures}
+					onUpgrade={handlePremiumUpgrade}
+				/>
 
-			<SettingsSection items={settingsItems} />
+				<SettingsSection items={settingsItems} />
 
-			<ContactSection />
+				<ContactSection />
 
-			<SignOutButton onSignOut={handleSignOut} />
-		</ScrollView>
+				<SignOutButton onSignOut={handleSignOut} />
+			</ScrollView>
+		</>
 	);
 };
 

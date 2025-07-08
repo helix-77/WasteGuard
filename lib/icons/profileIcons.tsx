@@ -14,6 +14,7 @@ import {
 	Mail,
 	Phone,
 	LogOut,
+	ChevronLeft,
 } from "lucide-react-native";
 
 import { iconWithClassName } from "./iconWithClassName";
@@ -33,8 +34,10 @@ iconWithClassName(ChevronRight);
 iconWithClassName(Mail);
 iconWithClassName(Phone);
 iconWithClassName(LogOut);
+iconWithClassName(ChevronLeft);
 
 export {
+	ChevronLeft,
 	LogOut,
 	Blend,
 	User,

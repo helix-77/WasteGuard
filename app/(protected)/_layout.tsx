@@ -23,13 +23,21 @@ export default function ProtectedLayout() {
 			<Stack>
 				<Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 				<Stack.Screen
-					name="screens"
+					name="profileScreens"
+					options={{
+						headerShown: false,
+					}}
+				/>
+				<Stack.Screen
+					name="profile"
 					options={{
 						headerShown: true,
-						headerTitle: "Profile",
+						title: "Profile",
+						headerBackVisible: true,
 						headerShadowVisible: false,
 						headerBackTitle: "Back",
-						headerBackground: () => null,
+						animation: "slide_from_bottom",
+						headerBackground: () => null, // Disable default header background
 					}}
 				/>
 			</Stack>
