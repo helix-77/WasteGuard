@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import {
 	View,
 	Text,
@@ -10,6 +10,8 @@ import {
 	Image,
 } from "react-native";
 import { AlertCircle, CalendarClock, Clock } from "lucide-react-native";
+import * as FileSystem from "expo-file-system";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { Package } from "@/lib/icons/Package";
 import { Tag } from "@/lib/icons/Tag";
@@ -17,17 +19,11 @@ import { Info } from "@/lib/icons/Info";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
-/**
- * Interface for the ProductBottomsheet component props
- */
 interface ProductBottomsheetProps {
 	product: ProductItem | null;
 	onClose: () => void;
 }
 
-/**
- * Interface representing a product item
- */
 interface ProductItem {
 	id: string;
 	name: string;
@@ -39,22 +35,135 @@ interface ProductItem {
 	notes?: string;
 }
 
-/**
- * ProductBottomsheet component displays detailed information about a product
- * in a bottom sheet when a product card is tapped
- */
 const ProductBottomsheet: React.FC<ProductBottomsheetProps> = ({
 	product,
 	onClose,
 }) => {
 	const translateY = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
 	const opacity = useRef(new Animated.Value(0)).current;
+	const [cachedImageUri, setCachedImageUri] = useState<string | null>(null);
+	const [imageLoading, setImageLoading] = useState(false);
+
+	// AsyncStorage keys for image caching
+	const getImageCacheKey = (imageUrl: string) => `cached_image_${imageUrl}`;
+	const getImageMetadataKey = (imageUrl: string) =>
+		`image_metadata_${imageUrl}`;
+
+	/**
+	 * Enhanced image caching with AsyncStorage for better UX
+	 * Stores both the cached file URI and metadata for cache management
+	 */
+	const cacheImageWithAsyncStorage = useCallback(
+		async (imageUrl: string): Promise<string> => {
+			try {
+				setImageLoading(true);
+
+				// Check if image is already cached in AsyncStorage
+				const cacheKey = getImageCacheKey(imageUrl);
+				const metadataKey = getImageMetadataKey(imageUrl);
+
+				const cachedUri = await AsyncStorage.getItem(cacheKey);
+				const metadata = await AsyncStorage.getItem(metadataKey);
+
+				if (cachedUri && metadata) {
+					const { timestamp, originalUrl } = JSON.parse(metadata);
+
+					// Check if cached file still exists and is not too old (7 days)
+					const fileInfo = await FileSystem.getInfoAsync(cachedUri);
+					const isExpired = Date.now() - timestamp > 7 * 24 * 60 * 60 * 1000; // 7 days
+
+					if (fileInfo.exists && !isExpired && originalUrl === imageUrl) {
+						setImageLoading(false);
+						return cachedUri;
+					} else {
+						// Clean up expired or invalid cache
+						await AsyncStorage.removeItem(cacheKey);
+						await AsyncStorage.removeItem(metadataKey);
+						if (fileInfo.exists) {
+							await FileSystem.deleteAsync(cachedUri, { idempotent: true });
+						}
+					}
+				}
+
+				// Download and cache new image
+				const filename =
+					imageUrl.split("/").pop()?.split("?")[0] || `image_${Date.now()}`;
+				const fileExtension = filename.includes(".") ? "" : ".jpg";
+				const fileUri = `${FileSystem.cacheDirectory}wasteguard_${Date.now()}_${filename}${fileExtension}`;
+
+				const downloadResult = await FileSystem.downloadAsync(
+					imageUrl,
+					fileUri,
+				);
+
+				if (downloadResult.status === 200) {
+					// Store in AsyncStorage for future reference
+					await AsyncStorage.setItem(cacheKey, downloadResult.uri);
+					await AsyncStorage.setItem(
+						metadataKey,
+						JSON.stringify({
+							timestamp: Date.now(),
+							originalUrl: imageUrl,
+							size:
+								(await FileSystem.getInfoAsync(downloadResult.uri)).size || 0,
+						}),
+					);
+
+					setImageLoading(false);
+					return downloadResult.uri;
+				} else {
+					throw new Error(
+						`Download failed with status: ${downloadResult.status}`,
+					);
+				}
+			} catch (error) {
+				console.warn("Failed to cache image:", error);
+				setImageLoading(false);
+				// Return original URL as fallback
+				return imageUrl;
+			}
+		},
+		[],
+	);
+
+	/**
+	 * Preload image immediately when product is available
+	 * This improves perceived performance
+	 */
+	const preloadImage = useCallback(
+		async (imageUrl: string) => {
+			try {
+				const cacheKey = getImageCacheKey(imageUrl);
+				const cachedUri = await AsyncStorage.getItem(cacheKey);
+
+				if (cachedUri) {
+					const fileInfo = await FileSystem.getInfoAsync(cachedUri);
+					if (fileInfo.exists) {
+						setCachedImageUri(cachedUri);
+						return;
+					}
+				}
+
+				// If not cached, show original URL immediately and cache in background
+				setCachedImageUri(imageUrl);
+				const newCachedUri = await cacheImageWithAsyncStorage(imageUrl);
+				if (newCachedUri !== imageUrl) {
+					setCachedImageUri(newCachedUri);
+				}
+			} catch (error) {
+				console.warn("Failed to preload image:", error);
+				setCachedImageUri(imageUrl);
+			}
+		},
+		[cacheImageWithAsyncStorage],
+	);
 
 	const panResponder = PanResponder.create({
 		onStartShouldSetPanResponder: () => true,
 		onMoveShouldSetPanResponder: (_, gestureState) => {
 			return Math.abs(gestureState.dy) > 10;
 		},
+
 		onPanResponderMove: (_, gestureState) => {
 			if (gestureState.dy > 0) {
 				translateY.setValue(gestureState.dy);
@@ -110,11 +219,18 @@ const ProductBottomsheet: React.FC<ProductBottomsheetProps> = ({
 
 		if (product) {
 			showModal();
+			// Preload image for better UX
+			if (product.imageUrl) {
+				preloadImage(product.imageUrl);
+			} else {
+				setCachedImageUri(null);
+			}
 		} else {
 			translateY.setValue(SCREEN_HEIGHT);
 			opacity.setValue(0);
+			setCachedImageUri(null);
 		}
-	}, [product, translateY, opacity]);
+	}, [product, translateY, opacity, preloadImage]);
 
 	// Early return if no product is selected
 	if (!product) {
@@ -192,13 +308,20 @@ const ProductBottomsheet: React.FC<ProductBottomsheetProps> = ({
 
 							<View className="p-6">
 								{/* Product Image Preview */}
-								{product.imageUrl && (
-									<View className="mb-6">
+								{(cachedImageUri || product.imageUrl) && (
+									<View className="mb-6 relative">
 										<Image
-											source={{ uri: product.imageUrl }}
+											source={{ uri: cachedImageUri || product.imageUrl }}
 											className="w-full h-48 rounded-xl"
 											resizeMode="cover"
+											onLoadStart={() => setImageLoading(true)}
+											onLoadEnd={() => setImageLoading(false)}
 										/>
+										{imageLoading && (
+											<View className="absolute inset-0 bg-muted/80 rounded-xl flex items-center justify-center">
+												<View className="bg-brand-500 w-4 h-4 rounded-full animate-pulse" />
+											</View>
+										)}
 									</View>
 								)}
 

@@ -44,9 +44,6 @@ const defaultCategories = [
 	"Seafood",
 ];
 
-/**
- * Product component that renders the list of all products with search and filtering
- */
 export default function Product() {
 	const [showSearch, setShowSearch] = useState(false);
 	const [searchQuery, setSearchQuery] = useState("");
@@ -54,7 +51,6 @@ export default function Product() {
 	const [refreshing, setRefreshing] = useState(false);
 	const flashListRef = useRef<FlashList<ProductItem>>(null);
 
-	// Use Supabase hook for products
 	const {
 		products,
 		categories,
@@ -64,7 +60,6 @@ export default function Product() {
 		refreshProducts,
 	} = useProducts();
 
-	// State for bottom sheet
 	const [selectedProduct, setSelectedProduct] = useState<ProductItem | null>(
 		null,
 	);
