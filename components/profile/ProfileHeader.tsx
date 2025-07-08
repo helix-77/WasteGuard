@@ -4,7 +4,6 @@ import { Card, CardContent, CardHeader } from "../ui/card";
 import { Crown, User } from "lucide-react-native";
 import { H3, Muted, Small } from "../ui/typography";
 import { Badge } from "../ui/badge";
-import { Button } from "../ui/button";
 
 interface ProfileHeaderProps {
 	name: string;

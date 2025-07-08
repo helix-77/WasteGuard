@@ -67,7 +67,6 @@ export default function Product() {
 	// Keep track of open swipeable items to close them when another is opened
 	const swipeableRefs = useRef<Map<string, Swipeable>>(new Map());
 
-	// Function to delete a product
 	const handleDelete = useCallback(
 		async (productId: string) => {
 			try {

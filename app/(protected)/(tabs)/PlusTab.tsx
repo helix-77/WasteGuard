@@ -1,5 +1,3 @@
-//! Quick Scan Feature integrated with CameraScanner
-
 import React, { useState, useCallback, useMemo, useRef } from "react";
 import { View, Alert, ScrollView, Image, Keyboard } from "react-native";
 import { SafeAreaView } from "../../../components/safe-area-view";

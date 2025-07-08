@@ -2,7 +2,6 @@ import React, { useState, useMemo } from "react";
 import { View, TouchableOpacity, Platform } from "react-native";
 import { Control, Controller } from "react-hook-form";
 import { Text } from "../../ui/text";
-import { Label } from "../../ui/label";
 import { ProductFormData } from "../ProductForm";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { CalendarDays } from "@/lib/icons/CalendarDays";

@@ -3,7 +3,7 @@ import React from "react";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Button } from "../ui/button";
 import { Text } from "../ui/text";
-import { H3, H4, Muted, Small } from "../ui/typography";
+import { H4, Muted } from "../ui/typography";
 import { Crown } from "lucide-react-native";
 
 export interface PremiumFeature {

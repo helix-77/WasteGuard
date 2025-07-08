@@ -174,6 +174,42 @@ export function useProducts() {
 	);
 
 	/**
+	 * Delete expired products (useful for cleanup operations)
+	 */
+	const deleteExpiredProducts = useCallback(async (): Promise<number> => {
+		try {
+			const expiredProducts = products.filter(
+				(product) => product.daysLeft <= 0,
+			);
+
+			if (expiredProducts.length === 0) {
+				return 0;
+			}
+
+			const expiredIds = expiredProducts.map((product) => product.id);
+
+			// Store original for rollback
+			const originalProducts = [...products];
+
+			// Optimistic update - remove expired products immediately
+			setProducts((prev) => prev.filter((p) => p.daysLeft > 0));
+
+			try {
+				// Delete from database and storage
+				await ProductService.deleteMultipleProducts(expiredIds);
+				return expiredProducts.length;
+			} catch (err) {
+				// Rollback on error
+				setProducts(originalProducts);
+				throw err;
+			}
+		} catch (err) {
+			console.error("Error deleting expired products:", err);
+			throw err;
+		}
+	}, [products]);
+
+	/**
 	 * Search products
 	 */
 	const searchProducts = useCallback(async (query: string): Promise<void> => {
@@ -262,6 +298,7 @@ export function useProducts() {
 		createProduct,
 		updateProduct,
 		deleteProduct,
+		deleteExpiredProducts,
 		searchProducts,
 		getProductsByCategory,
 		getExpiringSoonProducts,

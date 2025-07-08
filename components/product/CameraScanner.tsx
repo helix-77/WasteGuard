@@ -3,7 +3,7 @@ import { View, Alert, StyleSheet } from "react-native";
 import { CameraView, CameraType, useCameraPermissions } from "expo-camera";
 import { Text } from "../ui/text";
 import { Button } from "../ui/button";
-import { X, Camera, RotateCcw, Zap, ZapOff } from "lucide-react-native";
+import { X, Camera, Zap, ZapOff } from "lucide-react-native";
 import { SafeAreaView } from "../safe-area-view";
 
 interface CameraScannerProps {
@@ -30,9 +30,10 @@ export default function CameraScanner({
 		try {
 			setIsCapturing(true);
 			const photo = await cameraRef.current.takePictureAsync({
-				quality: 0.8,
+				quality: 0.6, // High quality for better compression results
 				base64: false,
 				skipProcessing: false,
+				exif: false, // Reduce metadata
 			});
 
 			if (photo?.uri) {

@@ -1,4 +1,5 @@
 import { supabase } from "@/config/supabase";
+import { ImageUploadService } from "./imageUploadService";
 
 /**
  * Database representation of a product
@@ -249,23 +250,123 @@ export class ProductService {
 	}
 
 	/**
-	 * Delete a product
+	 * Delete a product and its associated image from storage
 	 */
 	static async deleteProduct(productId: string): Promise<void> {
 		try {
-			const { error } = await supabase
+			// First, get the product to retrieve the image URL
+			const { data: product, error: fetchError } = await supabase
+				.from("products")
+				.select("image_url")
+				.eq("id", productId)
+				.single();
+
+			if (fetchError && fetchError.code !== "PGRST116") {
+				// PGRST116 is "not found" error, which is okay for deletion
+				console.error("Error fetching product for deletion:", fetchError);
+				throw new Error(`Failed to fetch product: ${fetchError.message}`);
+			}
+
+			// Delete the image from storage if it exists and is a Supabase URL
+			if (product?.image_url && this.isSupabaseStorageUrl(product.image_url)) {
+				try {
+					const imagePath = ImageUploadService.extractPathFromUrl(
+						product.image_url,
+					);
+					await ImageUploadService.deleteImage(imagePath);
+					// console.log(`✅ Deleted image from storage: ${imagePath}`);
+				} catch (imageError) {
+					// Log warning but don't fail the entire deletion
+					console.warn("⚠️ Failed to delete image from storage:", imageError);
+				}
+			}
+
+			// Delete the product from the database
+			const { error: deleteError } = await supabase
 				.from("products")
 				.delete()
 				.eq("id", productId);
 
-			if (error) {
-				console.error("Error deleting product:", error);
-				throw new Error(`Failed to delete product: ${error.message}`);
+			if (deleteError) {
+				console.error("Error deleting product from database:", deleteError);
+				throw new Error(`Failed to delete product: ${deleteError.message}`);
 			}
+
+			// console.log(`✅ Successfully deleted product: ${productId}`);
 		} catch (error) {
 			console.error("Error in deleteProduct:", error);
 			throw error;
 		}
+	}
+
+	/**
+	 * Delete multiple products and their associated images
+	 * Useful for bulk operations or cleanup
+	 */
+	static async deleteMultipleProducts(productIds: string[]): Promise<void> {
+		try {
+			// Get all products to retrieve image URLs
+			const { data: products, error: fetchError } = await supabase
+				.from("products")
+				.select("id, image_url")
+				.in("id", productIds);
+
+			if (fetchError) {
+				console.error("Error fetching products for bulk deletion:", fetchError);
+				throw new Error(`Failed to fetch products: ${fetchError.message}`);
+			}
+
+			// Delete images from storage (parallel execution for better performance)
+			const imageDeletePromises =
+				products
+					?.filter(
+						(product) =>
+							product.image_url && this.isSupabaseStorageUrl(product.image_url),
+					)
+					.map(async (product) => {
+						try {
+							const imagePath = ImageUploadService.extractPathFromUrl(
+								product.image_url!,
+							);
+							await ImageUploadService.deleteImage(imagePath);
+							console.log(
+								`✅ Deleted image for product ${product.id}: ${imagePath}`,
+							);
+						} catch (imageError) {
+							console.warn(
+								`⚠️ Failed to delete image for product ${product.id}:`,
+								imageError,
+							);
+						}
+					}) || [];
+
+			// Wait for all image deletions to complete (or fail gracefully)
+			await Promise.allSettled(imageDeletePromises);
+
+			// Delete products from database
+			const { error: deleteError } = await supabase
+				.from("products")
+				.delete()
+				.in("id", productIds);
+
+			if (deleteError) {
+				console.error("Error deleting products from database:", deleteError);
+				throw new Error(`Failed to delete products: ${deleteError.message}`);
+			}
+
+			console.log(`✅ Successfully deleted ${productIds.length} products`);
+		} catch (error) {
+			console.error("Error in deleteMultipleProducts:", error);
+			throw error;
+		}
+	}
+
+	/**
+	 * Check if a URL is from Supabase storage
+	 * Only delete images that are stored in our Supabase bucket
+	 */
+	private static isSupabaseStorageUrl(url: string): boolean {
+		return url.includes("/storage/v1/object/public/product-images/");
 	}
 
 	/**

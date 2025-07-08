@@ -3,7 +3,6 @@ import { View } from "react-native";
 import { Control, Controller, FieldError } from "react-hook-form";
 import { Input } from "../../ui/input";
 import { Text } from "../../ui/text";
-import { Label } from "../../ui/label";
 import { Package } from "lucide-react-native";
 import { ProductFormData } from "../ProductForm";
 
