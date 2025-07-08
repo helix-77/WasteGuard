@@ -7,8 +7,8 @@ import {
 	TextInput,
 	TouchableOpacity,
 	Animated,
-	FlatList,
-	ListRenderItem,
+	Alert,
+	RefreshControl,
 } from "react-native";
 import { SafeAreaView } from "@/components/safe-area-view";
 import {
@@ -16,11 +16,8 @@ import {
 	X,
 	AlertCircle,
 	Trash2,
-	User,
-	CircleUser,
 	UserCog,
-	User2,
-	UserCog2,
+	RefreshCw,
 } from "lucide-react-native";
 import {
 	Swipeable,
@@ -30,116 +27,13 @@ import {
 import ProductBottomsheet from "@/components/ProductBottomsheet";
 import { FlashList } from "@shopify/flash-list";
 import { router } from "expo-router";
-
-/**
- * Interface representing a product item
- */
-interface ProductItem {
-	id: string;
-	name: string;
-	category: string;
-	expiryDate: string;
-	daysLeft: number;
-	imageUrl?: string;
-	quantity?: number;
-	notes?: string;
-}
-
-/**
- * Sample product data for demonstration
- */
-const productList: ProductItem[] = [
-	{
-		id: "1",
-		name: "Organic Spinach",
-		category: "Vegetables",
-		expiryDate: "2025-07-02",
-		daysLeft: 3,
-		notes: "Fresh from local farm",
-		quantity: 1,
-	},
-	{
-		id: "2",
-		name: "Greek Yogurt",
-		category: "Dairy",
-		expiryDate: "2025-07-01",
-		daysLeft: 2,
-		quantity: 2,
-		notes:
-			"Low fat, plain. Perfect for smoothies. Store in fridge. Consume within 5 days after opening.",
-	},
-	{
-		id: "3",
-		name: "Sourdough Bread",
-		category: "Bakery",
-		expiryDate: "2025-06-30",
-		daysLeft: 1,
-		quantity: 1,
-	},
-	{
-		id: "4",
-		name: "Avocados",
-		category: "Fruits",
-		expiryDate: "2025-07-05",
-		daysLeft: 6,
-		quantity: 3,
-	},
-	{
-		id: "5",
-		name: "Fresh Salmon",
-		category: "Seafood",
-		expiryDate: "2025-06-29",
-		daysLeft: 0,
-		notes: "Wild caught",
-		quantity: 1,
-	},
-	{
-		id: "6",
-		name: "Bell Peppers",
-		category: "Vegetables",
-		expiryDate: "2025-06-30",
-		daysLeft: 1,
-		quantity: 4,
-	},
-	{
-		id: "7",
-		name: "Cream Cheese",
-		category: "Dairy",
-		expiryDate: "2025-07-01",
-		daysLeft: 2,
-		quantity: 1,
-	},
-	{
-		id: "8",
-		name: "Strawberries",
-		category: "Fruits",
-		expiryDate: "2025-07-01",
-		daysLeft: 2,
-		quantity: 1,
-		notes: "Organic",
-	},
-	{
-		id: "9",
-		name: "Chicken Breast",
-		category: "Meat",
-		expiryDate: "2025-06-29",
-		daysLeft: 0,
-		quantity: 2,
-	},
-	{
-		id: "10",
-		name: "Milk",
-		category: "Dairy",
-		expiryDate: "2025-07-02",
-		daysLeft: 3,
-		quantity: 1,
-	},
-];
+import { useProducts } from "@/lib/hooks/useProducts";
+import { ProductItem } from "@/lib/services/productService";
 
 /**
  * List of available product categories (user can create new categories while adding products)
  */
-const catagorieList = [
+const defaultCategories = [
 	"All",
 	"Cosmetics",
 	"Dairy",
@@ -157,9 +51,18 @@ export default function Product() {
 	const [showSearch, setShowSearch] = useState(false);
 	const [searchQuery, setSearchQuery] = useState("");
 	const [selectedCategory, setSelectedCategory] = useState("All");
+	const [refreshing, setRefreshing] = useState(false);
 	const flashListRef = useRef<FlashList<ProductItem>>(null);
 
-	const [products, setProducts] = useState<ProductItem[]>(productList);
+	// Use Supabase hook for products
+	const {
+		products,
+		categories,
+		loading,
+		error,
+		deleteProduct,
+		refreshProducts,
+	} = useProducts();
 
 	// State for bottom sheet
 	const [selectedProduct, setSelectedProduct] = useState<ProductItem | null>(
@@ -170,11 +73,17 @@ export default function Product() {
 	const swipeableRefs = useRef<Map<string, Swipeable>>(new Map());
 
 	// Function to delete a product
-	const handleDelete = useCallback((productId: string) => {
-		setProducts((currentProducts) =>
-			currentProducts.filter((product) => product.id !== productId),
-		);
-	}, []);
+	const handleDelete = useCallback(
+		async (productId: string) => {
+			try {
+				await deleteProduct(productId);
+			} catch (error) {
+				console.error("Failed to delete product:", error);
+				Alert.alert("Error", "Failed to delete product. Please try again.");
+			}
+		},
+		[deleteProduct],
+	);
 
 	// Function to handle product selection and open bottom sheet
 	const handleProductSelect = useCallback((product: ProductItem) => {
@@ -185,6 +94,24 @@ export default function Product() {
 	const handleCloseBottomSheet = useCallback(() => {
 		setSelectedProduct(null);
 	}, []);
+
+	// Handle pull to refresh
+	const handleRefresh = useCallback(async () => {
+		setRefreshing(true);
+		try {
+			await refreshProducts();
+		} catch (error) {
+			console.error("Failed to refresh products:", error);
+		} finally {
+			setRefreshing(false);
+		}
+	}, [refreshProducts]);
+
+	// Combine default categories with user categories
+	const allCategories = [
+		...defaultCategories,
+		...categories.filter((cat) => !defaultCategories.includes(cat)),
+	];
 
 	// Filter products based on search query and selected category
 	const filteredProducts = products.filter((product) => {
@@ -243,8 +170,8 @@ export default function Product() {
 	/**
 	 * Renders a single product item
 	 */
-	const renderProductItem: ListRenderItem<ProductItem> = useCallback(
-		({ item }) => {
+	const renderProductItem = useCallback(
+		({ item }: { item: ProductItem }) => {
 			const isExpiringSoon = item.daysLeft <= 2;
 			const isExpired = item.daysLeft <= 0;
 
@@ -383,7 +310,7 @@ export default function Product() {
 							className="mb-4"
 							contentContainerStyle={{ paddingHorizontal: 4 }}
 						>
-							{catagorieList.map((category) => (
+							{allCategories.map((category: string) => (
 								<Pressable
 									key={category}
 									onPress={() => setSelectedCategory(category)}
@@ -409,15 +336,44 @@ export default function Product() {
 
 					{/* Products section */}
 					<View style={{ flex: 1 }}>
-						<Text className="text-lg font-semibold text-muted-foreground mb-3">
-							Items ({filteredProducts.length})
-						</Text>
+						<View className="flex-row justify-between items-center mb-3">
+							<Text className="text-lg font-semibold text-muted-foreground">
+								Items ({filteredProducts.length})
+							</Text>
+							{loading && (
+								<TouchableOpacity onPress={refreshProducts}>
+									<RefreshCw size={16} color="#6b7280" />
+								</TouchableOpacity>
+							)}
+						</View>
 
-						{filteredProducts.length === 0 ? (
+						{error && (
+							<View className="bg-red-50 dark:bg-red-900/20 p-3 rounded-lg mb-3">
+								<Text className="text-red-600 dark:text-red-400 text-sm">
+									{error}
+								</Text>
+								<TouchableOpacity onPress={refreshProducts} className="mt-2">
+									<Text className="text-red-600 dark:text-red-400 text-sm font-medium">
+										Tap to retry
+									</Text>
+								</TouchableOpacity>
+							</View>
+						)}
+
+						{loading ? (
+							<View className="items-center justify-center py-12">
+								<RefreshCw size={32} color="#6b7280" className="animate-spin" />
+								<Text className="text-muted-foreground mt-4">
+									Loading products...
+								</Text>
+							</View>
+						) : filteredProducts.length === 0 ? (
 							<View className="items-center justify-center py-12">
 								<AlertCircle size={48} color="#9ca3af" />
 								<Text className="text-muted-foreground mt-4 text-center">
-									No products found matching your filters.
+									{searchQuery || selectedCategory !== "All"
+										? "No products found matching your filters."
+										: "No products yet. Add your first product!"}
 								</Text>
 							</View>
 						) : (
@@ -428,13 +384,15 @@ export default function Product() {
 								keyExtractor={(item) => item.id}
 								showsVerticalScrollIndicator={false}
 								contentContainerStyle={{ paddingBottom: 20 }}
-								estimatedItemSize={100} // ✅ Important for performance
-								removeClippedSubviews={true}
-								maxToRenderPerBatch={10}
-								windowSize={10}
-								initialNumToRender={8}
-								updateCellsBatchingPeriod={100}
-								onEndReachedThreshold={0.1}
+								estimatedItemSize={100}
+								refreshControl={
+									<RefreshControl
+										refreshing={refreshing}
+										onRefresh={handleRefresh}
+										colors={["#22c55e"]} // Android
+										tintColor="#22c55e" // iOS
+									/>
+								}
 							/>
 						)}
 					</View>

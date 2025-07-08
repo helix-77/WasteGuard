@@ -7,6 +7,7 @@ import {
 	Dimensions,
 	PanResponder,
 	TouchableWithoutFeedback,
+	Image,
 } from "react-native";
 import { AlertCircle, CalendarClock, Clock } from "lucide-react-native";
 
@@ -184,12 +185,23 @@ const ProductBottomsheet: React.FC<ProductBottomsheetProps> = ({
 								right: 0,
 								transform: [{ translateY }],
 							}}
-							className="bg-background rounded-t-3xl min-h-[60%] max-h-[90%] shadow-xl"
+							className="bg-background rounded-t-3xl min-h-[60%] max-h-[70%] shadow-xl"
 						>
 							{/* Drag Handle */}
 							<View className="w-10 h-1 bg-muted rounded-full self-center mt-3 mb-2" />
 
 							<View className="p-6">
+								{/* Product Image Preview */}
+								{product.imageUrl && (
+									<View className="mb-6">
+										<Image
+											source={{ uri: product.imageUrl }}
+											className="w-full h-48 rounded-xl"
+											resizeMode="cover"
+										/>
+									</View>
+								)}
+
 								{/* Product Title */}
 								<Text className="text-2xl font-bold text-foreground mb-1">
 									{product.name}

@@ -15,6 +15,9 @@ import { H4, Muted } from "../../../components/ui/typography";
 import { useRouter } from "expo-router";
 import CameraScanner from "@/components/product/CameraScanner";
 import { useCameraContext } from "@/context/camera-context";
+import { useProducts } from "@/lib/hooks/useProducts";
+import { CreateProductInput } from "@/lib/services/productService";
+import { ImageUploadService } from "@/lib/services/imageUploadService";
 
 interface ScanStatus {
 	image: string | null;
@@ -26,6 +29,9 @@ export default function PlusTab() {
 	const productFormRef = useRef<ProductFormRef>(null);
 	const [showCamera, setShowCamera] = useState(false);
 	const { setIsCameraOpen } = useCameraContext();
+
+	// Supabase integration
+	const { createProduct } = useProducts();
 
 	const [scanStatus, setScanStatus] = useState<ScanStatus>({
 		image: null,
@@ -94,15 +100,32 @@ export default function PlusTab() {
 			try {
 				setIsLoading(true);
 
-				// Add the captured image to the product data
-				const productWithImage = {
-					...productData,
-					imageUri: scanStatus.image,
+				// For now, use local image URI until storage bucket is set up
+				// TODO: Replace with ImageUploadService.uploadImage once storage bucket is configured
+				let imageUrl: string | undefined;
+				if (scanStatus.image) {
+					// Try to upload image, but fallback to local URI if it fails
+					try {
+						imageUrl = await ImageUploadService.uploadImage(scanStatus.image);
+					} catch (imageError) {
+						console.warn("Image upload failed, using local URI:", imageError);
+						// Use local image URI as fallback
+						imageUrl = scanStatus.image;
+					}
+				}
+
+				// Transform form data to match Supabase schema
+				const productInput: CreateProductInput = {
+					name: productData.name,
+					category: productData.category,
+					expiryDate: productData.expiryDate.toISOString().split("T")[0], // Convert to YYYY-MM-DD format
+					quantity: productData.quantity,
+					notes: productData.notes,
+					imageUrl: imageUrl, // Use uploaded image URL
 				};
 
-				// TODO: Replace with actual Supabase integration
-				await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API call
-				console.log("Saving product:", productWithImage);
+				// Save to Supabase
+				await createProduct(productInput);
 
 				Alert.alert(
 					"Success!",
@@ -126,6 +149,10 @@ export default function PlusTab() {
 							onPress: () => {
 								// Reset the form
 								productFormRef.current?.resetForm();
+								setScanStatus({
+									image: null,
+									isComplete: false,
+								});
 								router.push("/products");
 							},
 						},
@@ -133,15 +160,30 @@ export default function PlusTab() {
 				);
 			} catch (error) {
 				console.error("Error saving product:", error);
-				Alert.alert(
-					"Error",
-					"There was an error saving your product. Please try again.",
-				);
+
+				// More specific error messaging
+				let errorMessage =
+					"There was an error saving your product. Please try again.";
+				if (error instanceof Error) {
+					if (error.message.includes("User not authenticated")) {
+						errorMessage = "Please sign in to add products.";
+					} else if (error.message.includes("network")) {
+						errorMessage =
+							"Network error. Please check your connection and try again.";
+					}
+				}
+
+				Alert.alert("Error", errorMessage, [
+					{
+						text: "Try Again",
+						style: "default",
+					},
+				]);
 			} finally {
 				setIsLoading(false);
 			}
 		},
-		[isLoading, scanStatus, router],
+		[isLoading, scanStatus.image, createProduct, router],
 	);
 
 	// Render scan status indicator
@@ -242,6 +284,15 @@ export default function PlusTab() {
 								</View>
 							</Button>
 						</View>
+
+						{/* Image upload status */}
+						{isLoading && scanStatus.image && (
+							<View className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+								<Text className="text-blue-600 dark:text-blue-400 text-sm">
+									📤 Uploading image...
+								</Text>
+							</View>
+						)}
 					</Card>
 
 					{/* Product Form */}
