@@ -1,3 +1,5 @@
+// todo: Add expired products cleanup popup and functionality
+
 import React, { useState, useCallback, useRef } from "react";
 import {
 	View,
@@ -24,11 +26,11 @@ import {
 	RectButton,
 	GestureHandlerRootView,
 } from "react-native-gesture-handler";
-import ProductBottomsheet from "@/components/ProductBottomsheet";
 import { FlashList } from "@shopify/flash-list";
 import { router } from "expo-router";
 import { useProducts } from "@/lib/hooks/useProducts";
 import { ProductItem } from "@/lib/services/productService";
+import ProductDetails from "@/components/ProductDetails";
 
 /**
  * List of available product categories (user can create new categories while adding products)
@@ -265,6 +267,12 @@ export default function Product() {
 							>
 								<Search size={20} strokeWidth={3.5} color="#6b7280" />
 							</TouchableOpacity>
+							{/* <TouchableOpacity
+								onPress={() => setShowSearch(!showSearch)}
+								className="w-12 h-12 text-muted "
+							>
+								<Clear />
+							</TouchableOpacity> */}
 							<TouchableOpacity
 								onPress={() => router.push("../profile")}
 								className="p-2 rounded-full"
@@ -393,9 +401,10 @@ export default function Product() {
 				</View>
 
 				{/* Product bottom sheet */}
-				<ProductBottomsheet
+				<ProductDetails
 					product={selectedProduct}
 					onClose={handleCloseBottomSheet}
+					onDelete={handleDelete}
 				/>
 			</GestureHandlerRootView>
 		</SafeAreaView>

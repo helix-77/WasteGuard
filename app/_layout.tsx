@@ -16,6 +16,7 @@ import * as React from "react";
 import { Platform } from "react-native";
 
 import { NAV_THEME } from "../lib/constants";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 const LIGHT_THEME: Theme = {
 	...DefaultTheme,
@@ -55,14 +56,16 @@ export default function RootLayout() {
 
 	return (
 		<AuthProvider>
-			<ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
-				<StatusBar style={isDarkColorScheme ? "light" : "dark"} />
-				<Stack screenOptions={{ headerShown: false }}>
-					<Stack.Screen name="welcome" />
-					<Stack.Screen name="(auth)" />
-					<Stack.Screen name="(protected)" />
-				</Stack>
-			</ThemeProvider>
+			<GestureHandlerRootView style={{ flex: 1 }}>
+				<ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
+					<StatusBar style={isDarkColorScheme ? "light" : "dark"} />
+					<Stack screenOptions={{ headerShown: false }}>
+						<Stack.Screen name="welcome" />
+						<Stack.Screen name="(auth)" />
+						<Stack.Screen name="(protected)" />
+					</Stack>
+				</ThemeProvider>
+			</GestureHandlerRootView>
 		</AuthProvider>
 	);
 }
