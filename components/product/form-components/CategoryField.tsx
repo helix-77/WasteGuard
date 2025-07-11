@@ -1,22 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, TouchableOpacity, Alert } from "react-native";
 import { Control, Controller, FieldError } from "react-hook-form";
 import { Text } from "../../ui/text";
 import { Tag, Plus } from "lucide-react-native";
 import { ProductFormData } from "../ProductForm";
+import {
+	saveCustomCategory,
+	getCustomCategories,
+} from "../../../lib/utils/categoryStorage";
 
 // Common categories for quick selection
-const categorieList = [
-	"Dairy",
-	"Vegetables",
-	"Fruits",
-	"Meat",
-	"Cosmetics",
-	"Snacks",
-	"Beverages",
-	"Frozen",
-	"Pantry",
-	"Other",
+const defaultCategories = [
+	"🍟Snacks",
+	"🥤Beverages",
+	"💄Cosmetics",
+	"🥛Dairy",
+	"🛒Groceries",
+	"❄️Frozen",
+	"🧂Pantry",
 ];
 
 interface CategoryFieldProps {
@@ -31,6 +32,30 @@ export default function CategoryField({
 	isLoading = false,
 }: CategoryFieldProps) {
 	const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
+	const [categories, setCategories] = useState<string[]>(defaultCategories);
+
+	// Load custom categories on component mount
+	useEffect(() => {
+		const loadCustomCategories = async () => {
+			try {
+				const customCategories = await getCustomCategories();
+				// Combine default and custom categories, removing duplicates
+				const allCategories = [...defaultCategories];
+
+				customCategories.forEach((category) => {
+					if (!allCategories.includes(category)) {
+						allCategories.push(category);
+					}
+				});
+
+				setCategories(allCategories);
+			} catch (error) {
+				console.error("Error loading custom categories:", error);
+			}
+		};
+
+		loadCustomCategories();
+	}, []);
 
 	const handleCategorySelect = (
 		category: string,
@@ -54,8 +79,23 @@ export default function CategoryField({
 					text: "Add",
 					onPress: (text) => {
 						if (text && text.trim()) {
-							onChange(text.trim());
-							setShowCategoryDropdown(false);
+							const newCategory = text.trim();
+							// Save the new category to AsyncStorage
+							saveCustomCategory(newCategory)
+								.then(() => {
+									// Add the new category to the local state if it's not already there
+									if (!categories.includes(newCategory)) {
+										setCategories([...categories, newCategory]);
+									}
+									onChange(newCategory);
+									setShowCategoryDropdown(false);
+								})
+								.catch((error) => {
+									console.error("Error saving new category:", error);
+									// Still set the category for the current form
+									onChange(newCategory);
+									setShowCategoryDropdown(false);
+								});
 						}
 					},
 				},
@@ -93,7 +133,7 @@ export default function CategoryField({
 
 						{showCategoryDropdown && (
 							<View className="mt-2 border rounded-xl border-gray-300 dark:border-gray-600 bg-muted shadow-lg">
-								{categorieList.map((category) => (
+								{categories.map((category: string) => (
 									<TouchableOpacity
 										key={category}
 										className="p-3 border-gray-200 dark:border-gray-700"

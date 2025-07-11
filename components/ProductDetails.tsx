@@ -262,7 +262,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
 		<BottomSheet
 			isVisible={!!product}
 			onClose={onClose}
-			snapPoints={[0.7, 0.85]}
+			snapPoints={[0.65, 0.85]}
 			title={product.name}
 			enableBackdropDismiss={true}
 		>

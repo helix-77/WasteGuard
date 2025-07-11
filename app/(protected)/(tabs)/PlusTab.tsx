@@ -98,8 +98,6 @@ export default function PlusTab() {
 			try {
 				setIsLoading(true);
 
-				// For now, use local image URI until storage bucket is set up
-				// TODO: Replace with ImageUploadService.uploadImage once storage bucket is configured
 				let imageUrl: string | undefined;
 				if (scanStatus.image) {
 					// Try to upload image, but fallback to local URI if it fails
