@@ -291,8 +291,6 @@ export class ProductService {
 				console.error("Error deleting product from database:", deleteError);
 				throw new Error(`Failed to delete product: ${deleteError.message}`);
 			}
-
-			// console.log(`✅ Successfully deleted product: ${productId}`);
 		} catch (error) {
 			console.error("Error in deleteProduct:", error);
 			throw error;
@@ -353,8 +351,6 @@ export class ProductService {
 				console.error("Error deleting products from database:", deleteError);
 				throw new Error(`Failed to delete products: ${deleteError.message}`);
 			}
-
-			console.log(`✅ Successfully deleted ${productIds.length} products`);
 		} catch (error) {
 			console.error("Error in deleteMultipleProducts:", error);
 			throw error;

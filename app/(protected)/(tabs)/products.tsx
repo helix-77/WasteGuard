@@ -121,7 +121,10 @@ export default function Product() {
 	);
 
 	// Initialize the expired products notifications hook
-	useExpiredProductsNotifications(products, deleteExpiredProducts);
+	const { checkExpiredProducts } = useExpiredProductsNotifications(
+		products,
+		deleteExpiredProducts,
+	);
 
 	// Keep track of open swipeable items to close them when another is opened
 	const swipeableRefs = useRef<Map<string, Swipeable>>(new Map());
@@ -152,12 +155,14 @@ export default function Product() {
 		setRefreshing(true);
 		try {
 			await refreshProducts();
+			// Check for expired products after refreshing
+			checkExpiredProducts();
 		} catch (error) {
 			console.error("Failed to refresh products:", error);
 		} finally {
 			setRefreshing(false);
 		}
-	}, [refreshProducts]);
+	}, [refreshProducts, checkExpiredProducts]);
 
 	// Combine default categories with user categories
 	const allCategories = [

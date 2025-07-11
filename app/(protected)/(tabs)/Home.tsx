@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, ScrollView } from "react-native";
 import { SafeAreaView } from "@/components/safe-area-view";
 import { H1, Muted } from "@/components/ui/typography";
 import { StatsCard } from "@/components/dashboard/stats-card";
 import { RecentItems } from "@/components/dashboard/recent-items";
 import { AlertSection } from "@/components/dashboard/alert-section";
+
+import NotificationDebugger from "@/components/debug/NotificationDebugger";
 
 // Dummy data for demonstration
 const mockStats = {
@@ -119,8 +121,11 @@ const mockAlerts = [
 ];
 
 export default function Home() {
+	// const [showDebugger, setShowDebugger] = useState(false);
+
 	const handleStatsPress = (statType: string) => {
 		// TODO: Navigate to detailed stats view
+		// setShowDebugger(true);
 		console.log(`${statType} stats pressed`);
 	};
 
@@ -141,6 +146,9 @@ export default function Home() {
 				contentContainerStyle={{ paddingBottom: 32 }}
 				showsVerticalScrollIndicator={false}
 			>
+				{/* {showDebugger && (
+					<NotificationDebugger onClose={() => setShowDebugger(false)} />
+				)} */}
 				<View className="px-6 py-4">
 					{/* Header */}
 					<View className="mb-8">
