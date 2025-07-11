@@ -3,7 +3,7 @@ import { View, ScrollView, Pressable, TouchableOpacity } from "react-native";
 import { Card, CardContent } from "@/components/ui/card";
 import { Text } from "@/components/ui/text";
 import { Badge } from "@/components/ui/badge";
-import { CalendarIcon } from "@/components/icons";
+import { CalendarIcon } from "@/lib/icons";
 import { router } from "expo-router";
 
 interface RecentItem {
