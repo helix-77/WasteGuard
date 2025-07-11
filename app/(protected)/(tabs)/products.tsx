@@ -31,19 +31,21 @@ import { router } from "expo-router";
 import { useProducts } from "@/lib/hooks/useProducts";
 import { ProductItem } from "@/lib/services/productService";
 import ProductDetails from "@/components/ProductDetails";
+import Clear from "@/lib/icons/Clear";
+import { Settings } from "@/lib/icons/profileIcons";
 
 /**
  * List of available product categories (user can create new categories while adding products)
  */
 const defaultCategories = [
 	"All",
+	"Snacks",
+	"Beverages",
 	"Cosmetics",
 	"Dairy",
-	"Bakery",
-	"Vegetables",
-	"Fruits",
-	"Meat",
-	"Seafood",
+	"Frozen",
+	"Groceries",
+	"Pantry",
 ];
 
 export default function Product() {
@@ -59,6 +61,7 @@ export default function Product() {
 		loading,
 		error,
 		deleteProduct,
+		deleteExpiredProducts: deleteExpiredProductsHook,
 		refreshProducts,
 	} = useProducts();
 
@@ -251,6 +254,65 @@ export default function Product() {
 		[handleProductSelect, renderRightActions],
 	);
 
+	/**
+	 * Deletes all expired products with confirmation dialog
+	 */
+	const deleteExpiredProducts = useCallback(async () => {
+		try {
+			// Check if there are any expired products
+			const expiredCount = products.filter(
+				(product) => product.daysLeft <= 0,
+			).length;
+
+			if (expiredCount === 0) {
+				Alert.alert(
+					"No Expired Products",
+					"There are no expired products to delete.",
+					[{ text: "OK" }],
+				);
+				return;
+			}
+
+			// Show confirmation dialog
+			Alert.alert(
+				"Delete Expired Products",
+				`Are you sure you want to delete ${expiredCount} expired product${
+					expiredCount > 1 ? "s" : ""
+				}?`,
+				[
+					{
+						text: "Cancel",
+						style: "cancel",
+					},
+					{
+						text: "Delete",
+						style: "destructive",
+						onPress: async () => {
+							try {
+								const deletedCount = await deleteExpiredProductsHook();
+								Alert.alert(
+									"Success",
+									`Successfully deleted ${deletedCount} expired product${
+										deletedCount > 1 ? "s" : ""
+									}.`,
+								);
+							} catch (error) {
+								console.error("Error deleting expired products:", error);
+								Alert.alert(
+									"Error",
+									"Failed to delete expired products. Please try again.",
+								);
+							}
+						},
+					},
+				],
+			);
+		} catch (error) {
+			console.error("Error preparing to delete expired products:", error);
+			Alert.alert("Error", "An unexpected error occurred. Please try again.");
+		}
+	}, [products, deleteExpiredProductsHook]);
+
 	return (
 		<SafeAreaView className="flex-1 bg-background">
 			<GestureHandlerRootView style={{ flex: 1 }}>
@@ -265,19 +327,19 @@ export default function Product() {
 								onPress={() => setShowSearch(!showSearch)}
 								className="p-2 rounded-full"
 							>
-								<Search size={20} strokeWidth={3.5} color="#6b7280" />
+								<Search size={20} strokeWidth={3} color="#6b7280" />
 							</TouchableOpacity>
-							{/* <TouchableOpacity
-								onPress={() => setShowSearch(!showSearch)}
-								className="w-12 h-12 text-muted "
+							<TouchableOpacity
+								onPress={deleteExpiredProducts}
+								className="w-12 h-12 items-center justify-center"
 							>
-								<Clear />
-							</TouchableOpacity> */}
+								<Clear color="#6b7280" />
+							</TouchableOpacity>
 							<TouchableOpacity
 								onPress={() => router.push("../profile")}
 								className="p-2 rounded-full"
 							>
-								<UserCog size={20} strokeWidth={3} color="#6b7280" />
+								<Settings size={20} color="#6b7280" />
 							</TouchableOpacity>
 						</View>
 					</View>
@@ -370,14 +432,29 @@ export default function Product() {
 								</Text>
 							</View>
 						) : filteredProducts.length === 0 ? (
-							<View className="items-center justify-center py-12">
-								<AlertCircle size={48} color="#9ca3af" />
-								<Text className="text-muted-foreground mt-4 text-center">
-									{searchQuery || selectedCategory !== "All"
-										? "No products found matching your filters."
-										: "No products yet. Add your first product!"}
-								</Text>
-							</View>
+							<ScrollView
+								refreshControl={
+									<RefreshControl
+										refreshing={refreshing}
+										onRefresh={handleRefresh}
+										colors={["#22c55e"]} // Android
+										tintColor="#22c55e" // iOS
+									/>
+								}
+								contentContainerStyle={{
+									flexGrow: 1,
+									justifyContent: "center",
+								}}
+							>
+								<View className="items-center justify-center py-12">
+									<AlertCircle size={48} color="#9ca3af" />
+									<Text className="text-muted-foreground mt-4 text-center">
+										{searchQuery || selectedCategory !== "All"
+											? "No products found matching your filters."
+											: "No products yet. Add your first product!"}
+									</Text>
+								</View>
+							</ScrollView>
 						) : (
 							<FlashList
 								ref={flashListRef}

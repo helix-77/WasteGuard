@@ -15,8 +15,8 @@ const defaultCategories = [
 	"🥤Beverages",
 	"💄Cosmetics",
 	"🥛Dairy",
-	"🛒Groceries",
 	"❄️Frozen",
+	"🛒Groceries",
 	"🧂Pantry",
 ];
 
