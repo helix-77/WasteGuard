@@ -123,7 +123,7 @@ const FormDescription = React.forwardRef<
 		<Text
 			ref={ref}
 			nativeID={formDescriptionNativeID}
-			className={cn("text-sm text-muted-foreground pt-1", className)}
+			className={cn("text-xs text-muted-foreground pt-1 px-1", className)}
 			{...props}
 		/>
 	);
@@ -143,11 +143,14 @@ const FormMessage = React.forwardRef<
 
 	return (
 		<Animated.Text
-			entering={FadeInDown}
-			exiting={FadeOut.duration(275)}
+			entering={FadeInDown.duration(300).springify()}
+			exiting={FadeOut.duration(200)}
 			ref={ref}
 			nativeID={formMessageNativeID}
-			className={cn("text-sm font-medium text-destructive", className)}
+			className={cn(
+				"text-xs font-medium text-destructive mt-1 px-1",
+				className,
+			)}
 			{...props}
 		>
 			{body}
@@ -191,7 +194,7 @@ const FormInput = React.forwardRef<
 			return {} as React.ComponentRef<typeof Input>;
 		}
 		return inputRef.current;
-	}, [inputRef.current]);
+	}, []); // Fixed dependency array
 
 	function handleOnLabelPress() {
 		if (!inputRef.current) {
@@ -207,7 +210,11 @@ const FormInput = React.forwardRef<
 	return (
 		<FormItem>
 			{!!label && (
-				<FormLabel nativeID={formItemNativeID} onPress={handleOnLabelPress}>
+				<FormLabel
+					nativeID={formItemNativeID}
+					onPress={handleOnLabelPress}
+					className="text-foreground/80 font-medium"
+				>
 					{label}
 				</FormLabel>
 			)}
@@ -222,6 +229,13 @@ const FormInput = React.forwardRef<
 				}
 				aria-invalid={!!error}
 				onChangeText={onChange}
+				className={cn(
+					"bg-background border-input/30 rounded-xl",
+					"focus:border-primary focus:ring-1 focus:ring-primary/20",
+					"transition-all duration-200 ease-in-out",
+					error &&
+						"border-destructive/50 focus:border-destructive focus:ring-destructive/20",
+				)}
 				{...props}
 			/>
 			{!!description && <FormDescription>{description}</FormDescription>}
@@ -249,7 +263,7 @@ const FormTextarea = React.forwardRef<
 			return {} as React.ComponentRef<typeof Textarea>;
 		}
 		return textareaRef.current;
-	}, [textareaRef.current]);
+	}, []); // Fixed dependency array
 
 	function handleOnLabelPress() {
 		if (!textareaRef.current) {
@@ -265,7 +279,11 @@ const FormTextarea = React.forwardRef<
 	return (
 		<FormItem>
 			{!!label && (
-				<FormLabel nativeID={formItemNativeID} onPress={handleOnLabelPress}>
+				<FormLabel
+					nativeID={formItemNativeID}
+					onPress={handleOnLabelPress}
+					className="text-foreground/80 font-medium"
+				>
 					{label}
 				</FormLabel>
 			)}
@@ -280,6 +298,13 @@ const FormTextarea = React.forwardRef<
 				}
 				aria-invalid={!!error}
 				onChangeText={onChange}
+				className={cn(
+					"bg-background border-input/30 rounded-xl min-h-[120px]",
+					"focus:border-primary focus:ring-1 focus:ring-primary/20",
+					"transition-all duration-200 ease-in-out",
+					error &&
+						"border-destructive/50 focus:border-destructive focus:ring-destructive/20",
+				)}
 				{...props}
 			/>
 			{!!description && <FormDescription>{description}</FormDescription>}
@@ -347,7 +372,7 @@ const FormSwitch = React.forwardRef<
 			return {} as React.ComponentRef<typeof Switch>;
 		}
 		return switchRef.current;
-	}, [switchRef.current]);
+	}, []); // Fixed dependency array
 
 	function handleOnLabelPress() {
 		onChange?.(!value);
@@ -367,11 +392,12 @@ const FormSwitch = React.forwardRef<
 					aria-invalid={!!error}
 					onCheckedChange={onChange}
 					checked={value}
+					className="transition-opacity duration-200"
 					{...props}
 				/>
 				{!!label && (
 					<FormLabel
-						className="pb-0"
+						className="pb-0 text-foreground/80 font-medium"
 						nativeID={formItemNativeID}
 						onPress={handleOnLabelPress}
 					>

@@ -1,8 +1,20 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { ActivityIndicator, View, TouchableOpacity, Alert } from "react-native";
+import {
+	ActivityIndicator,
+	View,
+	TouchableOpacity,
+	Alert,
+	Animated,
+	KeyboardAvoidingView,
+	Platform,
+	Image,
+} from "react-native";
 import * as z from "zod";
 import { Link, router } from "expo-router";
+import { useEffect, useState } from "react";
+import { FontAwesome, Ionicons } from "@expo/vector-icons";
+import AntDesign from "@expo/vector-icons/AntDesign";
 
 import { SafeAreaView } from "@/components/safe-area-view";
 import { Button } from "@/components/ui/button";
@@ -40,6 +52,26 @@ const formSchema = z
 
 export default function SignUp() {
 	const { signUp } = useAuth();
+	const [fadeAnim] = useState(new Animated.Value(0));
+	const [slideAnim] = useState(new Animated.Value(30));
+	const [passwordVisible, setPasswordVisible] = useState(false);
+	const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
+
+	useEffect(() => {
+		// Start animations when component mounts
+		Animated.parallel([
+			Animated.timing(fadeAnim, {
+				toValue: 1,
+				duration: 800,
+				useNativeDriver: true,
+			}),
+			Animated.timing(slideAnim, {
+				toValue: 0,
+				duration: 800,
+				useNativeDriver: true,
+			}),
+		]).start();
+	}, [fadeAnim, slideAnim]);
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -57,6 +89,8 @@ export default function SignUp() {
 			form.reset();
 		} catch (error: Error | any) {
 			console.error(error.message);
+			Alert.alert("Error", "Failed to sign up. Please try again.");
+			return;
 		}
 		Alert.alert("Success", "Please check your inbox for email verification!", [
 			{
@@ -68,131 +102,184 @@ export default function SignUp() {
 		]);
 	}
 
+	const togglePasswordVisibility = () => {
+		setPasswordVisible(!passwordVisible);
+	};
+
+	const toggleConfirmPasswordVisibility = () => {
+		setConfirmPasswordVisible(!confirmPasswordVisible);
+	};
+
 	return (
-		<SafeAreaView className="flex-1 bg-background p-6" edges={["bottom"]}>
-			<View className="flex-1 justify-center">
-				<View className="rounded-3xl p-4 shadow-lg">
-					<Text className="text-2xl font-bold text-foreground mb-8 text-center">
-						Let's Get start!
-					</Text>
-
-					<Form {...form}>
-						<View className="gap-4 mb-6">
-							<FormField
-								control={form.control}
-								name="fullName"
-								render={({ field }) => (
-									<FormInput
-										label="Full Name"
-										placeholder="Full Name"
-										autoCapitalize="words"
-										autoComplete="name"
-										autoCorrect={false}
-										className=" rounded-xl px-4 py-3"
-										{...field}
-									/>
-								)}
+		<SafeAreaView className="flex-1 bg-background" edges={["top"]}>
+			<KeyboardAvoidingView
+				behavior={Platform.OS === "ios" ? "padding" : "height"}
+				className="flex-1"
+				keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+			>
+				<Animated.ScrollView
+					contentContainerStyle={{ flexGrow: 1 }}
+					className="px-6"
+					showsVerticalScrollIndicator={false}
+					style={{
+						opacity: fadeAnim,
+						transform: [{ translateY: slideAnim }],
+					}}
+				>
+					<View className="py-8">
+						<View className="items-center mb-8">
+							<Image
+								source={require("@/assets/icon.png")}
+								className="w-24 h-24 rounded-2xl mb-4"
 							/>
-							<FormField
-								control={form.control}
-								name="email"
-								render={({ field }) => (
-									<FormInput
-										label="Email"
-										placeholder="Email"
-										autoCapitalize="none"
-										autoComplete="email"
-										autoCorrect={false}
-										keyboardType="email-address"
-										className=" rounded-xl px-4 py-3"
-										{...field}
-									/>
-								)}
-							/>
-							<FormField
-								control={form.control}
-								name="password"
-								render={({ field }) => (
-									<FormInput
-										label="Password"
-										placeholder="Password"
-										autoCapitalize="none"
-										autoCorrect={false}
-										secureTextEntry
-										className="rounded-xl px-4 py-3"
-										{...field}
-									/>
-								)}
-							/>
-							<FormField
-								control={form.control}
-								name="confirmPassword"
-								render={({ field }) => (
-									<FormInput
-										label="Confirm Password"
-										placeholder="Confirm Password"
-										autoCapitalize="none"
-										autoCorrect={false}
-										secureTextEntry
-										className="rounded-xl px-4 py-3"
-										{...field}
-									/>
-								)}
-							/>
+							<Text className="text-3xl font-bold text-center text-primary">
+								Create Account
+							</Text>
+							<Text className="text-muted-foreground text-center mt-2">
+								Join WasteGuard to reduce waste and save resources
+							</Text>
 						</View>
-					</Form>
 
-					<Button
-						size="default"
-						onPress={form.handleSubmit(onSubmit)}
-						disabled={form.formState.isSubmitting}
-						className="rounded-xl py-4 mb-6"
-					>
-						{form.formState.isSubmitting ? (
-							<ActivityIndicator size="small" color="white" />
-						) : (
-							<Text className="font-semibold">Sign Up</Text>
-						)}
-					</Button>
+						<View className="rounded-3xl mb-6">
+							<Form {...form}>
+								<View className="gap-4 mb-4">
+									<FormField
+										control={form.control}
+										name="fullName"
+										render={({ field }) => (
+											<FormInput
+												label="Full Name"
+												placeholder="Your Name"
+												autoCapitalize="words"
+												autoComplete="name"
+												autoCorrect={false}
+												className="rounded-2xl px-4 py-4 placeholder:text-muted-foreground/50"
+												{...field}
+											/>
+										)}
+									/>
+									<FormField
+										control={form.control}
+										name="email"
+										render={({ field }) => (
+											<FormInput
+												label="Email"
+												placeholder="your.email@example.com"
+												autoCapitalize="none"
+												autoComplete="email"
+												autoCorrect={false}
+												keyboardType="email-address"
+												className="rounded-2xl px-4 py-4 placeholder:text-muted-foreground/50"
+												{...field}
+											/>
+										)}
+									/>
+									<FormField
+										control={form.control}
+										name="password"
+										render={({ field }) => (
+											<View className="relative">
+												<FormInput
+													label="Password"
+													placeholder="••••••••"
+													autoCapitalize="none"
+													autoCorrect={false}
+													secureTextEntry={!passwordVisible}
+													className="rounded-2xl px-4 py-4 pr-12 placeholder:text-muted-foreground/50"
+													{...field}
+												/>
+												<TouchableOpacity
+													onPress={togglePasswordVisibility}
+													className="absolute right-4 top-11"
+												>
+													<Ionicons
+														name={passwordVisible ? "eye-off" : "eye"}
+														size={20}
+														color="#666"
+													/>
+												</TouchableOpacity>
+											</View>
+										)}
+									/>
+									<FormField
+										control={form.control}
+										name="confirmPassword"
+										render={({ field }) => (
+											<View className="relative">
+												<FormInput
+													label="Confirm Password"
+													placeholder="••••••••"
+													autoCapitalize="none"
+													autoCorrect={false}
+													secureTextEntry={!confirmPasswordVisible}
+													className="rounded-2xl px-4 py-4 pr-12 placeholder:text-muted-foreground/50"
+													{...field}
+												/>
+												<TouchableOpacity
+													onPress={toggleConfirmPasswordVisibility}
+													className="absolute right-4 top-11"
+												>
+													<Ionicons
+														name={confirmPasswordVisible ? "eye-off" : "eye"}
+														size={20}
+														color="#666"
+													/>
+												</TouchableOpacity>
+											</View>
+										)}
+									/>
+								</View>
+							</Form>
 
-					<View className="items-center mb-6">
-						<Text className="text-gray-500 text-sm">Or</Text>
-					</View>
+							<Button
+								size="lg"
+								onPress={form.handleSubmit(onSubmit)}
+								disabled={form.formState.isSubmitting}
+								className="rounded-2xl py-4 mb-6 shadow-md shadow-primary/20"
+							>
+								{form.formState.isSubmitting ? (
+									<ActivityIndicator size="small" color="white" />
+								) : (
+									<Text className="text-white font-semibold text-base">
+										Create Account
+									</Text>
+								)}
+							</Button>
 
-					<View className="gap-3 mb-6">
-						<Button
-							variant="secondary"
-							className="border-red-600 rounded-xl py-4 flex-row items-center justify-center"
-						>
-							<Text className="text-red-600 font-semibold ml-2">
-								SIGNUP WITH GOOGLE
-							</Text>
-						</Button>
-
-						<Button
-							variant="secondary"
-							className="border-blue-600 rounded-xl py-4 flex-row items-center justify-center"
-						>
-							<Text className="text-blue-600 font-semibold ml-2">
-								SIGNUP WITH FACEBOOK
-							</Text>
-						</Button>
-					</View>
-
-					<View className="flex-row justify-center">
-						<Text className="text-gray-500 text-sm">
-							Already have account?{" "}
-						</Text>
-						<Link href="/sign-in" asChild>
-							<TouchableOpacity>
-								<Text className="text-primary font-semibold text-sm">
-									Log In
+							<View className="flex-row items-center justify-center mb-6">
+								<View className="h-[1px] bg-gray-300 flex-1" />
+								<Text className="text-muted-foreground mx-4">
+									Or sign up with
 								</Text>
-							</TouchableOpacity>
-						</Link>
+								<View className="h-[1px] bg-gray-300 flex-1" />
+							</View>
+
+							<View className="flex-row gap-4 mb-6 justify-center">
+								<TouchableOpacity className="border border-muted px-5 flex-row items-center justify-center p-3 rounded-2xl">
+									<AntDesign name="google" size={20} color="#DB4437" />
+									<Text className="ml-2 font-medium">Google</Text>
+								</TouchableOpacity>
+
+								<TouchableOpacity className="border border-muted px-5 flex-row items-center justify-center p-3 rounded-2xl">
+									<AntDesign name="apple1" size={20} color="#62748e" />
+									<Text className="ml-2 font-medium">Apple</Text>
+								</TouchableOpacity>
+							</View>
+						</View>
+
+						<View className="flex-row justify-center mb-4">
+							<Text className="text-muted-foreground">
+								Already have an account?{" "}
+							</Text>
+							<Link href="/sign-in" asChild>
+								<TouchableOpacity>
+									<Text className="text-primary font-semibold">Sign In</Text>
+								</TouchableOpacity>
+							</Link>
+						</View>
 					</View>
-				</View>
-			</View>
+				</Animated.ScrollView>
+			</KeyboardAvoidingView>
 		</SafeAreaView>
 	);
 }

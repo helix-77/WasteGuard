@@ -105,7 +105,7 @@ export class NotificationService {
 			console.log("Push token:", token);
 			return token;
 		} catch (error) {
-			return this.handleRegistrationError(`Error getting push token: ${error}`);
+			console.log("Error getting push token:", error);
 		}
 	}
 

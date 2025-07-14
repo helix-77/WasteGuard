@@ -14,19 +14,21 @@ const Layout = () => {
 			<Stack.Screen
 				name="sign-up"
 				options={{
-					headerShown: true,
+					headerShown: false,
 					headerTitle: "Sign Up",
 					// gestureEnabled: true,
 					headerShadowVisible: false,
+					headerBackground: () => null, // Disable default header background
 				}}
 			/>
 			<Stack.Screen
 				name="sign-in"
 				options={{
-					headerShown: true,
+					headerShown: false,
 					headerTitle: "Sign In",
 					gestureEnabled: true,
 					headerShadowVisible: false,
+					headerBackground: () => null, // Disable default header background
 				}}
 			/>
 		</Stack>

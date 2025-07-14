@@ -5,8 +5,8 @@ import * as Notifications from "expo-notifications";
 import { NotificationService } from "@/lib/services/notificationService";
 import { ProductItem } from "@/lib/services/productService";
 
-// The cooldown period between notifications (3 hours in milliseconds)
-const NOTIFICATION_COOLDOWN = 3 * 60 * 60 * 1000;
+// The cooldown period between notifications (8 hours in milliseconds)
+const NOTIFICATION_COOLDOWN = 8 * 60 * 60 * 1000;
 
 // Days threshold for considering a product as "expiring soon"
 const EXPIRING_SOON_THRESHOLD = 3;

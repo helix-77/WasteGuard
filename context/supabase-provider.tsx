@@ -5,14 +5,12 @@ import {
 	useEffect,
 	useState,
 } from "react";
-import { SplashScreen, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 
 import { Session } from "@supabase/supabase-js";
 
 import { supabase } from "@/config/supabase";
 import { Alert } from "react-native";
-
-SplashScreen.preventAutoHideAsync();
 
 type AuthState = {
 	initialized: boolean;
@@ -109,7 +107,6 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
 	useEffect(() => {
 		if (initialized) {
-			SplashScreen.hideAsync();
 			if (session) {
 				router.replace("/(protected)/(tabs)/home");
 			} else {

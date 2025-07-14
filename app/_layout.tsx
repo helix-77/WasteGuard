@@ -14,9 +14,14 @@ import {
 import { StatusBar } from "expo-status-bar";
 import * as React from "react";
 import { Platform } from "react-native";
+import * as SplashScreen from "expo-splash-screen";
 
 import { NAV_THEME } from "../lib/constants";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { AppSplashScreen } from "@/components/AppSplashScreen";
+
+// Keep the splash screen visible until we're ready to render
+SplashScreen.preventAutoHideAsync();
 
 const LIGHT_THEME: Theme = {
 	...DefaultTheme,
@@ -27,6 +32,12 @@ const DARK_THEME: Theme = {
 	colors: NAV_THEME.dark,
 };
 
+// Define the isomorphic layout effect once
+const useIsomorphicLayoutEffect =
+	Platform.OS === "web" && typeof window === "undefined"
+		? React.useEffect
+		: React.useLayoutEffect;
+
 export {
 	// Catch any errors thrown by the Layout component.
 	ErrorBoundary,
@@ -34,8 +45,9 @@ export {
 
 export default function RootLayout() {
 	const hasMounted = React.useRef(false);
-	const { colorScheme, isDarkColorScheme } = useColorScheme();
+	const { isDarkColorScheme } = useColorScheme();
 	const [isColorSchemeLoaded, setIsColorSchemeLoaded] = React.useState(false);
+	const [appIsReady, setAppIsReady] = React.useState(false);
 
 	useIsomorphicLayoutEffect(() => {
 		if (hasMounted.current) {
@@ -50,13 +62,30 @@ export default function RootLayout() {
 		hasMounted.current = true;
 	}, []);
 
+	const onLayoutRootView = React.useCallback(() => {
+		if (appIsReady && isColorSchemeLoaded) {
+			// This tells the splash screen to hide immediately
+			SplashScreen.hideAsync();
+		}
+	}, [appIsReady, isColorSchemeLoaded]);
+
 	if (!isColorSchemeLoaded) {
 		return null;
 	}
 
+	if (!appIsReady) {
+		return (
+			<AppSplashScreen
+				onReady={() => {
+					setAppIsReady(true);
+				}}
+			/>
+		);
+	}
+
 	return (
 		<AuthProvider>
-			<GestureHandlerRootView style={{ flex: 1 }}>
+			<GestureHandlerRootView style={{ flex: 1 }} onLayout={onLayoutRootView}>
 				<ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
 					<StatusBar style={isDarkColorScheme ? "light" : "dark"} />
 					<Stack screenOptions={{ headerShown: false }}>
@@ -69,8 +98,3 @@ export default function RootLayout() {
 		</AuthProvider>
 	);
 }
-
-const useIsomorphicLayoutEffect =
-	Platform.OS === "web" && typeof window === "undefined"
-		? React.useEffect
-		: React.useLayoutEffect;
