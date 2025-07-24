@@ -1,141 +1,98 @@
-import React, { useState } from "react";
-import { View, ScrollView } from "react-native";
+import React from "react";
+import { View, ScrollView, RefreshControl } from "react-native";
 import { SafeAreaView } from "@/components/safe-area-view";
 import { H1, Muted } from "@/components/ui/typography";
 import { StatsCard } from "@/components/dashboard/stats-card";
 import { RecentItems } from "@/components/dashboard/recent-items";
 import { AlertSection } from "@/components/dashboard/alert-section";
-
-// Dummy data for demonstration
-const mockStats = {
-	expiringSoon: 5,
-	totalSaved: 127,
-	wasteReduced: "2.3 kg",
-	itemsTracked: 45,
-};
-
-const mockRecentItems = [
-	{
-		id: "1",
-		name: "Organic Spinach",
-		category: "Vegetables",
-		expiryDate: "2025-07-02",
-		daysLeft: 3,
-	},
-	{
-		id: "2",
-		name: "Greek Yogurt",
-		category: "Dairy",
-		expiryDate: "2025-07-01",
-		daysLeft: 2,
-	},
-	{
-		id: "3",
-		name: "Sourdough Bread",
-		category: "Bakery",
-		expiryDate: "2025-06-30",
-		daysLeft: 1,
-	},
-	{
-		id: "4",
-		name: "Avocados",
-		category: "Fruits",
-		expiryDate: "2025-07-05",
-		daysLeft: 6,
-	},
-];
-
-const mockAlerts = [
-	{
-		id: "1",
-		name: "Fresh Salmon",
-		category: "Seafood",
-		daysLeft: 0,
-		priority: "high" as const,
-	},
-	{
-		id: "2",
-		name: "Bell Peppers",
-		category: "Vegetables",
-		daysLeft: 1,
-		priority: "high" as const,
-	},
-	{
-		id: "3",
-		name: "Cream Cheese",
-		category: "Dairy",
-		daysLeft: 2,
-		priority: "medium" as const,
-	},
-	{
-		id: "4",
-		name: "Ground Turkey",
-		category: "Meat",
-		daysLeft: 1,
-		priority: "high" as const,
-	},
-	{
-		id: "5",
-		name: "Strawberries",
-		category: "Fruits",
-		daysLeft: 2,
-		priority: "medium" as const,
-	},
-	{
-		id: "6",
-		name: "Spinach Leaves",
-		category: "Vegetables",
-		daysLeft: 3,
-		priority: "medium" as const,
-	},
-	{
-		id: "7",
-		name: "Greek Yogurt",
-		category: "Dairy",
-		daysLeft: 1,
-		priority: "high" as const,
-	},
-	{
-		id: "8",
-		name: "Chicken Breast",
-		category: "Meat",
-		daysLeft: 0,
-		priority: "high" as const,
-	},
-	{
-		id: "9",
-		name: "Bananas",
-		category: "Fruits",
-		daysLeft: 4,
-		priority: "low" as const,
-	},
-	{
-		id: "10",
-		name: "Milk",
-		category: "Dairy",
-		daysLeft: 3,
-		priority: "medium" as const,
-	},
-];
+import {
+	useProducts,
+	useExpiringSoonProducts,
+} from "@/lib/hooks/useProductsQuery";
+import { useDashboardStats } from "@/lib/hooks/useDashboardStats";
+import { Text } from "@/components/ui/text";
+import { RefreshCw } from "lucide-react-native";
+import { ProductItem } from "@/lib/services/productService";
 
 export default function Home() {
-	// const [showDebugger, setShowDebugger] = useState(false);
+	// TanStack Query hooks with intelligent caching
+	const {
+		data: products = [],
+		isLoading: productsLoading,
+		error: productsError,
+		refetch: refetchProducts,
+	} = useProducts();
+
+	const {
+		data: stats,
+		isLoading: statsLoading,
+		error: statsError,
+		refetch: refetchStats,
+	} = useDashboardStats();
+
+	const { data: expiringItems = [] } = useExpiringSoonProducts(3);
 
 	const handleStatsPress = (statType: string) => {
-		// TODO: Navigate to detailed stats view
-		// setShowDebugger(true);
 		console.log(`${statType} stats pressed`);
+		// Add navigation logic here based on statType
 	};
 
-	const handleItemPress = (item: any) => {
-		// TODO: Navigate to item details
+	const handleItemPress = (item: ProductItem) => {
 		console.log("Item pressed:", item.name);
+		// Add navigation to item details
 	};
 
 	const handleAlertPress = (alert: any) => {
-		// TODO: Navigate to item details or action menu
 		console.log("Alert pressed:", alert.name);
+		// Add navigation to expiring item
 	};
+
+	const handleRefresh = () => {
+		refetchProducts();
+		refetchStats();
+	};
+
+	// Show loading state
+	if (productsLoading || statsLoading) {
+		return (
+			<SafeAreaView className="flex-1 bg-background">
+				<View className="flex-1 items-center justify-center">
+					<RefreshCw size={32} className="text-muted-foreground animate-spin" />
+					<Text className="text-muted-foreground mt-4">
+						Loading dashboard...
+					</Text>
+				</View>
+			</SafeAreaView>
+		);
+	}
+
+	// Show error state
+	if (productsError || statsError) {
+		return (
+			<SafeAreaView className="flex-1 bg-background">
+				<View className="flex-1 items-center justify-center px-6">
+					<Text className="text-destructive text-center mb-4">
+						{productsError?.message ||
+							statsError?.message ||
+							"Something went wrong"}
+					</Text>
+					<Text className="text-primary font-medium" onPress={handleRefresh}>
+						Tap to retry
+					</Text>
+				</View>
+			</SafeAreaView>
+		);
+	}
+
+	// Get recent items (first 4)
+	const recentItems = products?.slice(0, 4) || [];
+
+	// Transform expiring items to alert format
+	const alertItems = expiringItems.map((item) => ({
+		...item,
+		priority:
+			item.daysLeft <= 1 ? "high" : item.daysLeft <= 3 ? "medium" : "low",
+	})) as any[];
 
 	return (
 		<SafeAreaView className="flex-1 bg-background">
@@ -143,6 +100,14 @@ export default function Home() {
 				className="flex-1"
 				contentContainerStyle={{ paddingBottom: 32 }}
 				showsVerticalScrollIndicator={false}
+				refreshControl={
+					<RefreshControl
+						refreshing={productsLoading || statsLoading}
+						onRefresh={handleRefresh}
+						colors={["#22c55e"]} // Android
+						tintColor="#22c55e" // iOS
+					/>
+				}
 			>
 				<View className="px-6 py-4">
 					{/* Header */}
@@ -159,14 +124,14 @@ export default function Home() {
 					<View className="flex-row gap-3 mb-6">
 						<StatsCard
 							title="Expiring Soon"
-							value={mockStats.expiringSoon}
+							value={stats?.expiringSoon || 0}
 							description="Items need attention"
 							variant="warning"
 							onPress={() => handleStatsPress("expiring")}
 						/>
 						<StatsCard
 							title="Items Saved"
-							value={mockStats.totalSaved}
+							value={stats?.totalSaved || 0}
 							description="This month"
 							variant="success"
 							onPress={() => handleStatsPress("saved")}
@@ -176,14 +141,14 @@ export default function Home() {
 					<View className="flex-row gap-3 mb-6">
 						<StatsCard
 							title="Waste Reduced"
-							value={mockStats.wasteReduced}
+							value={stats?.wasteReduced || "0 kg"}
 							description="Environmental impact"
 							variant="success"
 							onPress={() => handleStatsPress("waste")}
 						/>
 						<StatsCard
 							title="Total Items"
-							value={mockStats.itemsTracked}
+							value={stats?.itemsTracked || 0}
 							description="Being tracked"
 							variant="default"
 							onPress={() => handleStatsPress("total")}
@@ -191,10 +156,10 @@ export default function Home() {
 					</View>
 
 					{/* Recent Items */}
-					<RecentItems items={mockRecentItems} onItemPress={handleItemPress} />
+					<RecentItems items={recentItems} onItemPress={handleItemPress} />
 
 					{/* Alerts Section */}
-					<AlertSection alerts={mockAlerts} onAlertPress={handleAlertPress} />
+					<AlertSection alerts={alertItems} onAlertPress={handleAlertPress} />
 				</View>
 			</ScrollView>
 		</SafeAreaView>

@@ -36,7 +36,7 @@ export function RecentItems({ items, onItemPress }: RecentItemsProps) {
 
 	const handleViewAllProducts = () => {
 		// Handle view all products action
-		router.push("/productList");
+		router.push("/(protected)/(tabs)/products");
 	};
 
 	return (

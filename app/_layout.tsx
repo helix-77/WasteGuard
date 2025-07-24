@@ -3,6 +3,7 @@ import "../global.css";
 import { Stack } from "expo-router";
 
 import { AuthProvider } from "@/context/supabase-provider";
+import { QueryProvider } from "@/lib/providers/query-provider";
 import { useColorScheme } from "@/lib/useColorScheme";
 
 import {
@@ -84,17 +85,19 @@ export default function RootLayout() {
 	}
 
 	return (
-		<AuthProvider>
-			<GestureHandlerRootView style={{ flex: 1 }} onLayout={onLayoutRootView}>
-				<ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
-					<StatusBar style={isDarkColorScheme ? "light" : "dark"} />
-					<Stack screenOptions={{ headerShown: false }}>
-						<Stack.Screen name="welcome" />
-						<Stack.Screen name="(auth)" />
-						<Stack.Screen name="(protected)" />
-					</Stack>
-				</ThemeProvider>
-			</GestureHandlerRootView>
-		</AuthProvider>
+		<QueryProvider>
+			<AuthProvider>
+				<GestureHandlerRootView style={{ flex: 1 }} onLayout={onLayoutRootView}>
+					<ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
+						<StatusBar style={isDarkColorScheme ? "light" : "dark"} />
+						<Stack screenOptions={{ headerShown: false }}>
+							<Stack.Screen name="welcome" />
+							<Stack.Screen name="(auth)" />
+							<Stack.Screen name="(protected)" />
+						</Stack>
+					</ThemeProvider>
+				</GestureHandlerRootView>
+			</AuthProvider>
+		</QueryProvider>
 	);
 }

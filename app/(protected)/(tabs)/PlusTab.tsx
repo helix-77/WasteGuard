@@ -13,7 +13,7 @@ import { H4, Muted } from "../../../components/ui/typography";
 import { useRouter } from "expo-router";
 import CameraScanner from "@/components/product/CameraScanner";
 import { useCameraContext } from "@/context/camera-context";
-import { useProducts } from "@/lib/hooks/useProducts";
+import { useCreateProduct } from "@/lib/hooks/useProductsQuery";
 import { CreateProductInput } from "@/lib/services/productService";
 import { ImageUploadService } from "@/lib/services/imageUploadService";
 
@@ -28,8 +28,8 @@ export default function PlusTab() {
 	const [showCamera, setShowCamera] = useState(false);
 	const { setIsCameraOpen } = useCameraContext();
 
-	// Supabase integration
-	const { createProduct } = useProducts();
+	// TanStack Query mutation for creating products
+	const createProductMutation = useCreateProduct();
 
 	const [scanStatus, setScanStatus] = useState<ScanStatus>({
 		image: null,
@@ -120,8 +120,8 @@ export default function PlusTab() {
 					imageUrl: imageUrl, // Use uploaded image URL
 				};
 
-				// Save to Supabase
-				await createProduct(productInput);
+				// Save to Supabase using TanStack Query mutation
+				await createProductMutation.mutateAsync(productInput);
 
 				Alert.alert(
 					"Success!",
@@ -179,7 +179,7 @@ export default function PlusTab() {
 				setIsLoading(false);
 			}
 		},
-		[isLoading, scanStatus.image, createProduct, router],
+		[isLoading, scanStatus.image, createProductMutation, router],
 	);
 
 	// Render scan status indicator

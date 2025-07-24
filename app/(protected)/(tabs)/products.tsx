@@ -19,7 +19,11 @@ import {
 } from "react-native-gesture-handler";
 import { FlashList } from "@shopify/flash-list";
 import { router } from "expo-router";
-import { useProducts } from "@/lib/hooks/useProducts";
+import {
+	useProducts,
+	useDeleteProduct,
+	useCategories,
+} from "@/lib/hooks/useProductsQuery";
 import { ProductItem } from "@/lib/services/productService";
 import ProductDetails from "@/components/ProductDetails";
 import Clear from "@/lib/icons/Clear";
@@ -43,15 +47,15 @@ export default function Product() {
 	const [refreshing, setRefreshing] = useState(false);
 	const flashListRef = useRef<FlashList<ProductItem>>(null);
 
+	// Use TanStack Query hooks
 	const {
-		products,
-		categories,
-		loading,
+		data: products = [],
+		isLoading: loading,
 		error,
-		deleteProduct,
-		deleteExpiredProducts,
-		refreshProducts,
+		refetch: refreshProducts,
 	} = useProducts();
+	const { data: categories = [] } = useCategories();
+	const deleteProductMutation = useDeleteProduct();
 
 	const [selectedProduct, setSelectedProduct] = useState<ProductItem | null>(
 		null,
@@ -63,13 +67,13 @@ export default function Product() {
 	const handleDelete = useCallback(
 		async (productId: string) => {
 			try {
-				await deleteProduct(productId);
+				await deleteProductMutation.mutateAsync(productId);
 			} catch (error) {
 				console.error("Failed to delete product:", error);
 				Alert.alert("Error", "Failed to delete product. Please try again.");
 			}
 		},
-		[deleteProduct],
+		[deleteProductMutation],
 	);
 
 	// Function to handle product selection and open bottom sheet
