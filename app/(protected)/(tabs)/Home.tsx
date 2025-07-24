@@ -33,17 +33,17 @@ export default function Home() {
 	const { data: expiringItems = [] } = useExpiringSoonProducts(3);
 
 	const handleStatsPress = (statType: string) => {
-		console.log(`${statType} stats pressed`);
+		// console.log(`${statType} stats pressed`);
 		// Add navigation logic here based on statType
 	};
 
 	const handleItemPress = (item: ProductItem) => {
-		console.log("Item pressed:", item.name);
+		// console.log("Item pressed:", item.name);
 		// Add navigation to item details
 	};
 
 	const handleAlertPress = (alert: any) => {
-		console.log("Alert pressed:", alert.name);
+		// console.log("Alert pressed:", alert.name);
 		// Add navigation to expiring item
 	};
 

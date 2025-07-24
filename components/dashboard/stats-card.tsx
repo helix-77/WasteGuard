@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Pressable } from "react-native";
+import { View, Pressable, TouchableOpacity } from "react-native";
 import { Card, CardContent } from "@/components/ui/card";
 import { Text } from "@/components/ui/text";
 import { cn } from "@/lib/utils";
@@ -73,9 +73,9 @@ export function StatsCard({
 
 	if (onPress) {
 		return (
-			<Pressable onPress={onPress} className="flex-1">
+			<TouchableOpacity onPress={onPress} className="flex-1">
 				{content}
-			</Pressable>
+			</TouchableOpacity>
 		);
 	}
 

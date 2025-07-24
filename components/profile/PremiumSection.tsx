@@ -25,7 +25,7 @@ const PremiumSection: React.FC<PremiumSectionProps> = ({
 		if (onUpgrade) {
 			onUpgrade();
 		} else {
-			console.log("Upgrade to premium pressed");
+			//Todo
 		}
 	};
 

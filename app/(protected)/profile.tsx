@@ -85,7 +85,6 @@ const Profile: React.FC = () => {
 			icon: <User size={20} className="text-foreground" />,
 			onPress: () => {
 				router.push("/profileScreens/editProfile");
-				console.log("Edit profile pressed");
 			},
 			showChevron: true,
 		},
@@ -94,7 +93,6 @@ const Profile: React.FC = () => {
 			icon: <Key size={20} className="text-foreground" />,
 			onPress: () => {
 				router.push("/profileScreens/editCredentials");
-				console.log("Edit credentials pressed");
 			},
 			showChevron: true,
 		},
@@ -103,7 +101,6 @@ const Profile: React.FC = () => {
 			icon: <Info size={20} className="text-foreground" />,
 			onPress: () => {
 				router.push("/profileScreens/about");
-				console.log("About pressed");
 			},
 			showChevron: true,
 		},
@@ -112,7 +109,6 @@ const Profile: React.FC = () => {
 			icon: <Shield size={20} className="text-foreground" />,
 			onPress: () => {
 				router.push("/profileScreens/privacyPolicy");
-				console.log("Privacy policy pressed");
 			},
 			showChevron: true,
 		},

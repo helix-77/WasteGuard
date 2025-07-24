@@ -13,12 +13,16 @@ web-build/
 .env
 
 ios/
+android/
 
 .cursorrules
 .github/
 .vscode/
 .idea/
 docs/
+
+next.todo
+
 
 # macOS
 .DS_Store
