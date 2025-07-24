@@ -153,7 +153,7 @@ export default function SignUp() {
 												autoCapitalize="words"
 												autoComplete="name"
 												autoCorrect={false}
-												className="rounded-2xl px-4 py-4 placeholder:text-muted-foreground/50"
+												className="placeholder:text-muted-foreground/50"
 												{...field}
 											/>
 										)}
@@ -169,7 +169,7 @@ export default function SignUp() {
 												autoComplete="email"
 												autoCorrect={false}
 												keyboardType="email-address"
-												className="rounded-2xl px-4 py-4 placeholder:text-muted-foreground/50"
+												className="placeholder:text-muted-foreground/50"
 												{...field}
 											/>
 										)}

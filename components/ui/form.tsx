@@ -232,12 +232,13 @@ const FormInput = React.forwardRef<
 				className={cn(
 					"bg-background border-input/30 rounded-xl",
 					"focus:border-primary focus:ring-1 focus:ring-primary/20",
-					"transition-all duration-200 ease-in-out",
+					"transition-all duration-200 ease-in-out rounded-2xl",
 					error &&
 						"border-destructive/50 focus:border-destructive focus:ring-destructive/20",
 				)}
 				{...props}
 			/>
+
 			{!!description && <FormDescription>{description}</FormDescription>}
 			<FormMessage />
 		</FormItem>

@@ -277,7 +277,7 @@ export function useProducts() {
 					table: "products",
 				},
 				(payload) => {
-					console.log("Product change detected:", payload);
+					// console.log("Product change detected:", payload);
 					// Refresh products when any change occurs
 					loadProducts();
 				},

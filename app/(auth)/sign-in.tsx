@@ -22,6 +22,7 @@ import { Text } from "@/components/ui/text";
 import { useAuth } from "@/context/supabase-provider";
 import { Facebook, LogOut } from "lucide-react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import { Input } from "@/components/ui/input";
 
 const formSchema = z.object({
 	email: z.string().email("Please enter a valid email address."),
@@ -120,7 +121,7 @@ export default function SignIn() {
 												autoComplete="email"
 												autoCorrect={false}
 												keyboardType="email-address"
-												className="rounded-2xl px-4 py-4 placeholder:text-muted-foreground/50"
+												className="placeholder:text-muted-foreground/50"
 												{...field}
 											/>
 										)}
@@ -136,7 +137,7 @@ export default function SignIn() {
 													autoCapitalize="none"
 													autoCorrect={false}
 													secureTextEntry={!passwordVisible}
-													className="rounded-2xl px-4 py-4 pr-12 placeholder:text-muted-foreground/50"
+													className="pr-12 placeholder:text-muted-foreground/50"
 													{...field}
 												/>
 												<TouchableOpacity

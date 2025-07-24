@@ -49,7 +49,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
 		if (data.session) {
 			setSession(data.session);
-			console.log("User signed up:", data.user);
+			// console.log("User signed up:", data.user);
 		} else {
 			console.log("No user returned from sign up");
 			Alert.alert("Error", "No user returned from sign up. Please try again.");
@@ -70,7 +70,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
 		if (data.session) {
 			setSession(data.session);
-			console.log("User signed in:", data.user);
+			// console.log("User signed in:", data.user);
 			router.replace("/(protected)/(tabs)/home");
 		} else {
 			console.log("No user returned from sign in");
@@ -88,8 +88,6 @@ export function AuthProvider({ children }: PropsWithChildren) {
 		if (error) {
 			console.error("Error signing out:", error);
 			return;
-		} else {
-			console.log("User signed out");
 		}
 	};
 

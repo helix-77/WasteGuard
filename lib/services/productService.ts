@@ -376,9 +376,9 @@ export class ProductService {
 								product.image_url!,
 							);
 							await ImageUploadService.deleteImage(imagePath);
-							console.log(
-								`✅ Deleted image for product ${product.id}: ${imagePath}`,
-							);
+							// console.log(
+							// 	`✅ Deleted image for product ${product.id}: ${imagePath}`,
+							// );
 						} catch (imageError) {
 							console.warn(
 								`⚠️ Failed to delete image for product ${product.id}:`,
