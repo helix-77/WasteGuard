@@ -57,6 +57,55 @@ export interface UpdateProductInput {
 }
 
 /**
+ * User statistics from database
+ */
+export interface UserStatistics {
+	id: string;
+	userId: string;
+	totalProductsAdded: number;
+	totalProductsUsed: number;
+	totalProductsExpired: number;
+	currentActiveProducts: number;
+	lastActivityDate: string;
+	createdAt: string;
+	updatedAt: string;
+}
+
+/**
+ * User analytics with calculated fields
+ */
+export interface UserAnalytics {
+	userId: string;
+	totalProductsAdded: number;
+	totalProductsUsed: number;
+	totalProductsExpired: number;
+	currentActiveProducts: number;
+	lastActivityDate: string;
+	usagePercentage: number;
+	productsUsedBeforeExpiry: number;
+	productsUsedAfterExpiry: number;
+}
+
+/**
+ * Usage history entry
+ */
+export interface UsageHistoryItem {
+	id: string;
+	userId: string;
+	productId: string;
+	usageDate: string;
+	daysBeforeExpiry: number;
+	wasExpired: boolean;
+	quantityUsed: number;
+	usageNotes?: string;
+	createdAt: string;
+	productName: string;
+	productCategory: string;
+	expiryDate: string;
+	productNotes?: string;
+}
+
+/**
  * Transform database product to frontend format
  */
 export function transformDatabaseProductToFrontend(
@@ -410,6 +459,143 @@ export class ProductService {
 			return uniqueCategories;
 		} catch (error) {
 			console.error("Error in getCategories:", error);
+			throw error;
+		}
+	}
+
+	/**
+	 * Mark a product as used by calling the database function
+	 */
+	static async markProductAsUsed(
+		productId: string,
+		quantityUsed?: number,
+		usageNotes?: string,
+	): Promise<boolean> {
+		try {
+			const { data, error } = await supabase.rpc("mark_product_as_used", {
+				product_id_param: productId,
+				quantity_used_param: quantityUsed || null,
+				usage_notes_param: usageNotes || null,
+			});
+
+			if (error) {
+				console.error("Error marking product as used:", error);
+				throw new Error(`Failed to mark product as used: ${error.message}`);
+			}
+
+			return data;
+		} catch (error) {
+			console.error("Error in markProductAsUsed:", error);
+			throw error;
+		}
+	}
+
+	/**
+	 * Get user statistics
+	 */
+	static async getUserStatistics(): Promise<UserStatistics | null> {
+		try {
+			const { data, error } = await supabase
+				.from("user_statistics")
+				.select("*")
+				.single();
+
+			if (error) {
+				if (error.code === "PGRST116") {
+					// No data found, return null
+					return null;
+				}
+				console.error("Error fetching user statistics:", error);
+				throw new Error(`Failed to fetch user statistics: ${error.message}`);
+			}
+
+			return {
+				id: data.id,
+				userId: data.user_id,
+				totalProductsAdded: data.total_products_added,
+				totalProductsUsed: data.total_products_used,
+				totalProductsExpired: data.total_products_expired,
+				currentActiveProducts: data.current_active_products,
+				lastActivityDate: data.last_activity_date,
+				createdAt: data.created_at,
+				updatedAt: data.updated_at,
+			};
+		} catch (error) {
+			console.error("Error in getUserStatistics:", error);
+			throw error;
+		}
+	}
+
+	/**
+	 * Get user analytics with calculated fields
+	 */
+	static async getUserAnalytics(): Promise<UserAnalytics | null> {
+		try {
+			const { data, error } = await supabase
+				.from("user_analytics")
+				.select("*")
+				.single();
+
+			if (error) {
+				if (error.code === "PGRST116") {
+					// No data found, return null
+					return null;
+				}
+				console.error("Error fetching user analytics:", error);
+				throw new Error(`Failed to fetch user analytics: ${error.message}`);
+			}
+
+			return {
+				userId: data.user_id,
+				totalProductsAdded: data.total_products_added,
+				totalProductsUsed: data.total_products_used,
+				totalProductsExpired: data.total_products_expired,
+				currentActiveProducts: data.current_active_products,
+				lastActivityDate: data.last_activity_date,
+				usagePercentage: parseFloat(data.usage_percentage) || 0,
+				productsUsedBeforeExpiry: data.products_used_before_expiry,
+				productsUsedAfterExpiry: data.products_used_after_expiry,
+			};
+		} catch (error) {
+			console.error("Error in getUserAnalytics:", error);
+			throw error;
+		}
+	}
+
+	/**
+	 * Get usage history
+	 */
+	static async getUsageHistory(): Promise<UsageHistoryItem[]> {
+		try {
+			const { data, error } = await supabase
+				.from("usage_history_with_products")
+				.select("*")
+				.order("usage_date", { ascending: false });
+
+			if (error) {
+				console.error("Error fetching usage history:", error);
+				throw new Error(`Failed to fetch usage history: ${error.message}`);
+			}
+
+			return (
+				data?.map((item) => ({
+					id: item.id,
+					userId: item.user_id,
+					productId: item.product_id,
+					usageDate: item.usage_date,
+					daysBeforeExpiry: item.days_before_expiry,
+					wasExpired: item.was_expired,
+					quantityUsed: item.quantity_used,
+					usageNotes: item.usage_notes,
+					createdAt: item.created_at,
+					productName: item.product_name,
+					productCategory: item.product_category,
+					expiryDate: item.expiry_date,
+					productNotes: item.product_notes,
+				})) || []
+			);
+		} catch (error) {
+			console.error("Error in getUsageHistory:", error);
 			throw error;
 		}
 	}

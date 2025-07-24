@@ -7,7 +7,13 @@ import {
 	TouchableOpacity,
 	ScrollView,
 } from "react-native";
-import { AlertCircle, CalendarClock, Clock, Trash2 } from "lucide-react-native";
+import {
+	AlertCircle,
+	CalendarClock,
+	Clock,
+	Trash2,
+	CheckCircle,
+} from "lucide-react-native";
 import * as FileSystem from "expo-file-system";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -17,7 +23,7 @@ import { Tag } from "@/lib/icons/Tag";
 import { Info } from "@/lib/icons/Info";
 import { BlockQuote } from "./ui/typography";
 import { ProductService } from "@/lib/services/productService";
-import { Button } from "./ui/button";
+import { useMarkProductAsUsed } from "@/lib/hooks/useProductsQuery";
 
 interface ProductDetailsProps {
 	product: ProductItem | null;
@@ -44,6 +50,83 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
 	const [cachedImageUri, setCachedImageUri] = useState<string | null>(null);
 	const [imageLoading, setImageLoading] = useState(false);
 	const [isDeleting, setIsDeleting] = useState(false);
+	const [isMarkingAsUsed, setIsMarkingAsUsed] = useState(false);
+
+	// TanStack Query hook for marking product as used
+	const markAsUsedMutation = useMarkProductAsUsed();
+
+	// Handle marking product as used
+	const markProductAsUsedWithQuantity = useCallback(
+		async (quantityUsed?: number) => {
+			if (!product) return;
+
+			try {
+				setIsMarkingAsUsed(true);
+				await markAsUsedMutation.mutateAsync({
+					productId: product.id,
+					quantityUsed,
+				});
+
+				// If all quantity was used, close the bottom sheet
+				if (!quantityUsed || quantityUsed >= (product.quantity || 1)) {
+					onClose();
+				}
+			} catch (error) {
+				console.error("Failed to mark product as used:", error);
+				Alert.alert(
+					"Error",
+					"Failed to mark product as used. Please try again.",
+					[{ text: "OK" }],
+				);
+			} finally {
+				setIsMarkingAsUsed(false);
+			}
+		},
+		[product, markAsUsedMutation, onClose],
+	);
+
+	const handleMarkAsUsed = useCallback(async () => {
+		if (!product) return;
+
+		// If product has quantity > 1, show options for partial or full usage
+		if (product.quantity && product.quantity > 1) {
+			Alert.alert(
+				"Mark as Used",
+				`How many items of "${product.name}" did you use?`,
+				[
+					{
+						text: "Cancel",
+						style: "cancel",
+					},
+					{
+						text: "Use 1 item",
+						onPress: () => markProductAsUsedWithQuantity(1),
+					},
+					{
+						text: "Use all items",
+						onPress: () => markProductAsUsedWithQuantity(product.quantity!),
+					},
+				],
+				{ cancelable: true },
+			);
+		} else {
+			Alert.alert(
+				"Mark as Used",
+				`Mark "${product.name}" as used?`,
+				[
+					{
+						text: "Cancel",
+						style: "cancel",
+					},
+					{
+						text: "Mark as Used",
+						onPress: () => markProductAsUsedWithQuantity(),
+					},
+				],
+				{ cancelable: true },
+			);
+		}
+	}, [product, markProductAsUsedWithQuantity]);
 
 	// Handle deletion with confirmation
 	const handleDelete = useCallback(async () => {
@@ -319,7 +402,19 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
 								</Text>
 							</View>
 						</View>
-						<View className="">
+						<View className="flex-row gap-2">
+							<TouchableOpacity
+								onPress={handleMarkAsUsed}
+								disabled={isMarkingAsUsed}
+								className="p-2 rounded-2xl bg-green-100 dark:bg-green-950/50"
+							>
+								<CheckCircle size={20} strokeWidth={2.5} color="#22c55e" />
+								{isMarkingAsUsed && (
+									<View className="absolute inset-0 items-center justify-center">
+										<View className="w-4 h-4 border-2 border-green-300 border-t-green-500 rounded-full animate-spin" />
+									</View>
+								)}
+							</TouchableOpacity>
 							<TouchableOpacity
 								onPress={handleDelete}
 								disabled={isDeleting}

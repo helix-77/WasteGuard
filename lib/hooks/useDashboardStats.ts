@@ -5,7 +5,7 @@ import { ProductService } from "@/lib/services/productService";
 export interface DashboardStats {
 	expiringSoon: number;
 	totalSaved: number;
-	wasteReduced: string;
+	itemsConsumed: string;
 	itemsTracked: number;
 }
 
@@ -27,9 +27,8 @@ export function useDashboardStats(): {
 			const expiringSoon = products.filter((p) => p.daysLeft <= 3).length;
 			const itemsTracked = products.length;
 
-			// Calculate estimated waste reduced (mock calculation)
-			// In a real app, you'd track this over time
-			const wasteReduced = `${(itemsTracked * 0.05).toFixed(1)} kg`;
+			// Calculate estimated items consumed
+			const itemsConsumed = `${(itemsTracked * 0.05).toFixed(1)} kg`;
 
 			// Calculate items saved this month (mock calculation)
 			// In a real app, you'd track consumed items
@@ -38,7 +37,7 @@ export function useDashboardStats(): {
 			return {
 				expiringSoon,
 				totalSaved,
-				wasteReduced,
+				itemsConsumed: itemsConsumed,
 				itemsTracked,
 			};
 		},

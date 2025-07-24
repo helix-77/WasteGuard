@@ -5,6 +5,7 @@ import {
 	CreateProductInput,
 	UpdateProductInput,
 } from "@/lib/services/productService";
+import { USER_STATS_QUERY_KEYS } from "./useUserStatistics";
 
 // Query Keys - centralized for consistency
 export const QUERY_KEYS = {
@@ -287,6 +288,76 @@ export function useDeleteMultipleProducts() {
 		onSettled: () => {
 			queryClient.invalidateQueries({ queryKey: QUERY_KEYS.PRODUCTS });
 			queryClient.invalidateQueries({ queryKey: QUERY_KEYS.DASHBOARD_STATS });
+		},
+	});
+}
+
+/**
+ * Hook to mark a product as used
+ */
+export function useMarkProductAsUsed() {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: ({
+			productId,
+			quantityUsed,
+			usageNotes,
+		}: {
+			productId: string;
+			quantityUsed?: number;
+			usageNotes?: string;
+		}) => ProductService.markProductAsUsed(productId, quantityUsed, usageNotes),
+		onMutate: async ({ productId, quantityUsed }) => {
+			await queryClient.cancelQueries({ queryKey: QUERY_KEYS.PRODUCTS });
+
+			const previousProducts = queryClient.getQueryData<ProductItem[]>(
+				QUERY_KEYS.PRODUCTS,
+			);
+
+			if (previousProducts && quantityUsed) {
+				const updatedProducts = previousProducts
+					.map((product) => {
+						if (product.id === productId) {
+							const remainingQuantity = (product.quantity || 1) - quantityUsed;
+							if (remainingQuantity <= 0) {
+								// Remove product if no quantity left
+								return null;
+							}
+							return { ...product, quantity: remainingQuantity };
+						}
+						return product;
+					})
+					.filter(Boolean) as ProductItem[];
+
+				queryClient.setQueryData(QUERY_KEYS.PRODUCTS, updatedProducts);
+			} else if (previousProducts) {
+				// Remove the product completely if no quantity specified
+				const filteredProducts = previousProducts.filter(
+					(p) => p.id !== productId,
+				);
+				queryClient.setQueryData(QUERY_KEYS.PRODUCTS, filteredProducts);
+			}
+
+			return { previousProducts };
+		},
+		onError: (err, variables, context) => {
+			if (context?.previousProducts) {
+				queryClient.setQueryData(QUERY_KEYS.PRODUCTS, context.previousProducts);
+			}
+		},
+		onSettled: () => {
+			queryClient.invalidateQueries({ queryKey: QUERY_KEYS.PRODUCTS });
+			queryClient.invalidateQueries({ queryKey: QUERY_KEYS.DASHBOARD_STATS });
+			queryClient.invalidateQueries({
+				queryKey: USER_STATS_QUERY_KEYS.USER_STATISTICS,
+			});
+			queryClient.invalidateQueries({
+				queryKey: USER_STATS_QUERY_KEYS.USAGE_HISTORY,
+			});
+			queryClient.invalidateQueries({
+				queryKey: USER_STATS_QUERY_KEYS.USER_ANALYTICS,
+			});
 		},
 	});
 }

@@ -57,6 +57,47 @@ export default function Product() {
 	const { data: categories = [] } = useCategories();
 	const deleteProductMutation = useDeleteProduct();
 
+	// Function to delete expired products
+	const deleteExpiredProducts = useCallback(async () => {
+		const expiredProducts = products.filter((product) => product.daysLeft <= 0);
+
+		if (expiredProducts.length === 0) {
+			Alert.alert(
+				"No Expired Products",
+				"There are no expired products to delete.",
+			);
+			return;
+		}
+
+		Alert.alert(
+			"Delete Expired Products",
+			`Are you sure you want to delete ${expiredProducts.length} expired product${expiredProducts.length > 1 ? "s" : ""}?`,
+			[
+				{
+					text: "Cancel",
+					style: "cancel",
+				},
+				{
+					text: "Delete",
+					style: "destructive",
+					onPress: async () => {
+						try {
+							for (const product of expiredProducts) {
+								await deleteProductMutation.mutateAsync(product.id);
+							}
+						} catch (error) {
+							console.error("Failed to delete expired products:", error);
+							Alert.alert(
+								"Error",
+								"Failed to delete some products. Please try again.",
+							);
+						}
+					},
+				},
+			],
+		);
+	}, [products, deleteProductMutation]);
+
 	const [selectedProduct, setSelectedProduct] = useState<ProductItem | null>(
 		null,
 	);
@@ -337,7 +378,7 @@ export default function Product() {
 								Items ({filteredProducts.length})
 							</Text>
 							{loading && (
-								<TouchableOpacity onPress={refreshProducts}>
+								<TouchableOpacity onPress={() => refreshProducts()}>
 									<RefreshCw size={16} color="#6b7280" />
 								</TouchableOpacity>
 							)}
@@ -346,9 +387,12 @@ export default function Product() {
 						{error && (
 							<View className="bg-red-50 dark:bg-red-900/20 p-3 rounded-lg mb-3">
 								<Text className="text-red-600 dark:text-red-400 text-sm">
-									{error}
+									{error.message || "An error occurred"}
 								</Text>
-								<TouchableOpacity onPress={refreshProducts} className="mt-2">
+								<TouchableOpacity
+									onPress={() => refreshProducts()}
+									className="mt-2"
+								>
 									<Text className="text-red-600 dark:text-red-400 text-sm font-medium">
 										Tap to retry
 									</Text>

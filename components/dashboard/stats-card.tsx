@@ -8,7 +8,7 @@ interface StatsCardProps {
 	title: string;
 	value: string | number;
 	description?: string;
-	variant?: "default" | "success" | "warning" | "destructive";
+	variant?: "default" | "dim" | "warning" | "destructive" | "success-glow";
 	onPress?: () => void;
 }
 
@@ -18,8 +18,8 @@ const variantStyles = {
 		value: "text-foreground",
 		title: "text-muted-foreground",
 	},
-	success: {
-		card: "bg-green-50  dark:bg-green-950",
+	dim: {
+		card: "bg-green-50  dark:bg-green-950/50",
 		value: "text-green-900 dark:text-green-100",
 		title: "text-green-700 dark:text-green-300",
 	},
@@ -32,6 +32,11 @@ const variantStyles = {
 		card: " bg-red-50  dark:bg-red-950",
 		value: "text-red-900 dark:text-red-100",
 		title: "text-red-700 dark:text-red-300",
+	},
+	"success-glow": {
+		card: "bg-green-100 dark:bg-green-950 shadow-lg shadow-green-500/50 ",
+		value: "text-green-900 dark:text-green-100",
+		title: "text-green-700 dark:text-green-300",
 	},
 };
 

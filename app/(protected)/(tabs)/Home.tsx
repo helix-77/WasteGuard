@@ -9,7 +9,7 @@ import {
 	useProducts,
 	useExpiringSoonProducts,
 } from "@/lib/hooks/useProductsQuery";
-import { useDashboardStats } from "@/lib/hooks/useDashboardStats";
+import { useUserAnalytics } from "@/lib/hooks/useUserStatistics";
 import { Text } from "@/components/ui/text";
 import { RefreshCw } from "lucide-react-native";
 import { ProductItem } from "@/lib/services/productService";
@@ -24,11 +24,11 @@ export default function Home() {
 	} = useProducts();
 
 	const {
-		data: stats,
-		isLoading: statsLoading,
-		error: statsError,
-		refetch: refetchStats,
-	} = useDashboardStats();
+		data: userAnalytics,
+		isLoading: analyticsLoading,
+		error: analyticsError,
+		refetch: refetchAnalytics,
+	} = useUserAnalytics();
 
 	const { data: expiringItems = [] } = useExpiringSoonProducts(3);
 
@@ -49,11 +49,11 @@ export default function Home() {
 
 	const handleRefresh = () => {
 		refetchProducts();
-		refetchStats();
+		refetchAnalytics();
 	};
 
 	// Show loading state
-	if (productsLoading || statsLoading) {
+	if (productsLoading || analyticsLoading) {
 		return (
 			<SafeAreaView className="flex-1 bg-background">
 				<View className="flex-1 items-center justify-center">
@@ -67,13 +67,13 @@ export default function Home() {
 	}
 
 	// Show error state
-	if (productsError || statsError) {
+	if (productsError || analyticsError) {
 		return (
 			<SafeAreaView className="flex-1 bg-background">
 				<View className="flex-1 items-center justify-center px-6">
 					<Text className="text-destructive text-center mb-4">
 						{productsError?.message ||
-							statsError?.message ||
+							analyticsError?.message ||
 							"Something went wrong"}
 					</Text>
 					<Text className="text-primary font-medium" onPress={handleRefresh}>
@@ -94,6 +94,14 @@ export default function Home() {
 			item.daysLeft <= 1 ? "high" : item.daysLeft <= 3 ? "medium" : "low",
 	})) as any[];
 
+	// Get analytics data with fallbacks
+	const analyticsData = userAnalytics || {
+		productsUsedBeforeExpiry: 0,
+		totalProductsUsed: 0,
+		currentActiveProducts: products?.length || 0,
+		usagePercentage: 0,
+	};
+
 	return (
 		<SafeAreaView className="flex-1 bg-background">
 			<ScrollView
@@ -102,7 +110,7 @@ export default function Home() {
 				showsVerticalScrollIndicator={false}
 				refreshControl={
 					<RefreshControl
-						refreshing={productsLoading || statsLoading}
+						refreshing={productsLoading || analyticsLoading}
 						onRefresh={handleRefresh}
 						colors={["#22c55e"]} // Android
 						tintColor="#22c55e" // iOS
@@ -124,36 +132,49 @@ export default function Home() {
 					<View className="flex-row gap-3 mb-6">
 						<StatsCard
 							title="Expiring Soon"
-							value={stats?.expiringSoon || 0}
+							value={expiringItems.length}
 							description="Items need attention"
 							variant="warning"
 							onPress={() => handleStatsPress("expiring")}
 						/>
 						<StatsCard
 							title="Items Saved"
-							value={stats?.totalSaved || 0}
-							description="This month"
-							variant="success"
+							value={analyticsData.productsUsedBeforeExpiry}
+							description="Used before expiry"
+							variant="success-glow"
 							onPress={() => handleStatsPress("saved")}
 						/>
 					</View>
 
 					<View className="flex-row gap-3 mb-6">
 						<StatsCard
-							title="Waste Reduced"
-							value={stats?.wasteReduced || "0 kg"}
-							description="Environmental impact"
-							variant="success"
-							onPress={() => handleStatsPress("waste")}
+							title="Items Consumed"
+							value={analyticsData.totalProductsUsed}
+							description="Total items used"
+							variant="dim"
+							onPress={() => handleStatsPress("consumed")}
 						/>
 						<StatsCard
-							title="Total Items"
-							value={stats?.itemsTracked || 0}
-							description="Being tracked"
+							title="Active Items"
+							value={analyticsData.currentActiveProducts}
+							description="Currently tracking"
 							variant="default"
 							onPress={() => handleStatsPress("total")}
 						/>
 					</View>
+
+					{/* Usage Efficiency Card */}
+					{userAnalytics && userAnalytics.totalProductsAdded > 0 && (
+						<View className="mb-6">
+							<StatsCard
+								title="Usage Efficiency"
+								value={`${analyticsData.usagePercentage.toFixed(1)}%`}
+								description={`${analyticsData.productsUsedBeforeExpiry} saved from waste`}
+								variant="success"
+								onPress={() => handleStatsPress("efficiency")}
+							/>
+						</View>
+					)}
 
 					{/* Recent Items */}
 					<RecentItems items={recentItems} onItemPress={handleItemPress} />

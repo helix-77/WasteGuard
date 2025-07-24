@@ -16,7 +16,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ name, email, plan }) => {
 		<Card className="mx-4 mb-4">
 			<CardHeader className="flex-row items-center justify-center">
 				{/* Avatar placeholder */}
-				<View className="w-24 h-24 rounded-full bg-primary items-center justify-center shadow-lg ">
+				<View className="w-24 h-24 rounded-full bg-primary items-center justify-center shadow-lg shadow-green-500/50">
 					<User size={40} className="text-white" />
 				</View>
 
