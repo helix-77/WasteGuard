@@ -20,7 +20,6 @@ import {
 import { FlashList } from "@shopify/flash-list";
 import { router } from "expo-router";
 import { useProducts } from "@/lib/hooks/useProducts";
-import { useExpiredProductsNotifications } from "@/lib/hooks/useExpiredProductsNotifications";
 import { ProductItem } from "@/lib/services/productService";
 import ProductDetails from "@/components/ProductDetails";
 import Clear from "@/lib/icons/Clear";
@@ -50,80 +49,12 @@ export default function Product() {
 		loading,
 		error,
 		deleteProduct,
-		deleteExpiredProducts: deleteExpiredProductsHook,
+		deleteExpiredProducts,
 		refreshProducts,
 	} = useProducts();
 
 	const [selectedProduct, setSelectedProduct] = useState<ProductItem | null>(
 		null,
-	);
-
-	// Function to delete expired products from the title bar's clear button
-	const deleteExpiredProducts = useCallback(
-		async (fromNotification = false) => {
-			try {
-				// Check if there are any expired products
-				const expiredCount = products.filter(
-					(product) => product.daysLeft <= 0,
-				).length;
-
-				if (expiredCount === 0) {
-					if (!fromNotification) {
-						Alert.alert(
-							"No Expired Products",
-							"There are no expired products to delete.",
-							[{ text: "OK" }],
-						);
-					}
-					return;
-				}
-
-				// Show confirmation dialog
-				Alert.alert(
-					"Delete Expired Products",
-					`Are you sure you want to delete ${expiredCount} expired product${
-						expiredCount > 1 ? "s" : ""
-					}?`,
-					[
-						{
-							text: "Cancel",
-							style: "cancel",
-						},
-						{
-							text: "Delete",
-							style: "destructive",
-							onPress: async () => {
-								try {
-									const deletedCount = await deleteExpiredProductsHook();
-									Alert.alert(
-										"Success",
-										`Successfully deleted ${deletedCount} expired product${
-											deletedCount > 1 ? "s" : ""
-										}.`,
-									);
-								} catch (error) {
-									console.error("Error deleting expired products:", error);
-									Alert.alert(
-										"Error",
-										"Failed to delete expired products. Please try again.",
-									);
-								}
-							},
-						},
-					],
-				);
-			} catch (error) {
-				console.error("Error preparing to delete expired products:", error);
-				Alert.alert("Error", "An unexpected error occurred. Please try again.");
-			}
-		},
-		[products, deleteExpiredProductsHook],
-	);
-
-	// Initialize the expired products notifications hook
-	const { checkExpiredProducts } = useExpiredProductsNotifications(
-		products,
-		deleteExpiredProducts,
 	);
 
 	// Keep track of open swipeable items to close them when another is opened
@@ -155,14 +86,12 @@ export default function Product() {
 		setRefreshing(true);
 		try {
 			await refreshProducts();
-			// Check for expired products after refreshing
-			checkExpiredProducts();
 		} catch (error) {
 			console.error("Failed to refresh products:", error);
 		} finally {
 			setRefreshing(false);
 		}
-	}, [refreshProducts, checkExpiredProducts]);
+	}, [refreshProducts]);
 
 	// Combine default categories with user categories
 	const allCategories = [

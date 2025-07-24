@@ -6,8 +6,6 @@ import { StatsCard } from "@/components/dashboard/stats-card";
 import { RecentItems } from "@/components/dashboard/recent-items";
 import { AlertSection } from "@/components/dashboard/alert-section";
 
-import NotificationDebugger from "@/components/debug/NotificationDebugger";
-
 // Dummy data for demonstration
 const mockStats = {
 	expiringSoon: 5,
@@ -146,9 +144,6 @@ export default function Home() {
 				contentContainerStyle={{ paddingBottom: 32 }}
 				showsVerticalScrollIndicator={false}
 			>
-				{/* {showDebugger && (
-					<NotificationDebugger onClose={() => setShowDebugger(false)} />
-				)} */}
 				<View className="px-6 py-4">
 					{/* Header */}
 					<View className="mb-8">
