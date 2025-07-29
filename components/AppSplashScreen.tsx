@@ -14,7 +14,7 @@ export function AppSplashScreen({ onReady }: SplashScreenProps) {
 	// We define this but don't use it directly as it's handled by Expo
 	const _splashImage =
 		colorScheme === "dark"
-			? require("@/assets/splash-dark.png")
+			? require("@/assets/splash.png")
 			: require("@/assets/splash.png");
 
 	const appIcon =

@@ -16,7 +16,6 @@ import { StatusBar } from "expo-status-bar";
 import * as React from "react";
 import { Platform } from "react-native";
 import * as SplashScreen from "expo-splash-screen";
-
 import { NAV_THEME } from "../lib/constants";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { AppSplashScreen } from "@/components/AppSplashScreen";
