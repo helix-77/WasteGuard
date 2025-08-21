@@ -17,7 +17,7 @@ import {
 	Swipeable,
 	RectButton,
 } from "react-native-gesture-handler";
-import { FlashList } from "@shopify/flash-list";
+import { LegendList } from "@legendapp/list";
 import { router } from "expo-router";
 import {
 	useProducts,
@@ -45,7 +45,7 @@ export default function Product() {
 	const [searchQuery, setSearchQuery] = useState("");
 	const [selectedCategory, setSelectedCategory] = useState("All");
 	const [refreshing, setRefreshing] = useState(false);
-	const flashListRef = useRef<FlashList<ProductItem>>(null);
+	const LegendListRef = useRef<LegendList<ProductItem>>(null);
 
 	// Use TanStack Query hooks
 	const {
@@ -432,8 +432,8 @@ export default function Product() {
 								</View>
 							</ScrollView>
 						) : (
-							<FlashList
-								ref={flashListRef}
+							<LegendList
+								ref={LegendListRef}
 								data={filteredProducts}
 								renderItem={renderProductItem}
 								keyExtractor={(item) => item.id}
@@ -448,6 +448,7 @@ export default function Product() {
 										tintColor="#22c55e" // iOS
 									/>
 								}
+								recycleItems
 							/>
 						)}
 					</View>

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { View, Pressable } from "react-native";
-import { FlashList } from "@shopify/flash-list";
+import { LegendList } from "@legendapp/list";
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Text } from "@/components/ui/text";
 import { Badge } from "@/components/ui/badge";
@@ -20,7 +21,7 @@ interface AlertSectionProps {
 	onViewAllPress?: () => void;
 }
 
-// FlashList implementation with expandable functionality
+// LegendList implementation with expandable functionality
 // - Shows 3 items by default
 // - Expands to show 8 items when "View All" is pressed
 // - Button text changes to "Show Less" when expanded
@@ -143,12 +144,13 @@ export function AlertSection({
 			</View>
 
 			<View style={{ height: maxDisplayHeight }}>
-				<FlashList
+				<LegendList
 					data={displayedAlerts}
 					renderItem={renderAlertItem}
 					estimatedItemSize={itemHeight}
 					showsVerticalScrollIndicator={false}
 					keyExtractor={(item) => item.id}
+					recycleItems
 				/>
 			</View>
 		</View>

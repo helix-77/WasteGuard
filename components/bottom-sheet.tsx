@@ -54,13 +54,24 @@ export function BottomSheet({
 	const [modalVisible, setModalVisible] = React.useState(false);
 
 	useEffect(() => {
+		let timeoutId: ReturnType<typeof setTimeout>;
+
 		if (isVisible) {
+			// Set modal visible first
 			setModalVisible(true);
-			translateY.value = withSpring(defaultHeight, {
-				damping: 50,
-				stiffness: 400,
-			});
-			opacity.value = withTiming(1, { duration: 300 });
+
+			// Small delay to ensure modal is rendered before animation starts
+			timeoutId = setTimeout(() => {
+				// Reset the position before animating up (helps with reliability)
+				translateY.value = 0;
+
+				// Then animate up with spring
+				translateY.value = withSpring(defaultHeight, {
+					damping: 50,
+					stiffness: 400,
+				});
+				opacity.value = withTiming(1, { duration: 300 });
+			}, 50);
 		} else {
 			// Animate slide down before closing modal
 			translateY.value = withSpring(0, {
@@ -73,7 +84,12 @@ export function BottomSheet({
 				}
 			});
 		}
-	}, [isVisible, defaultHeight]);
+
+		// Cleanup function to handle component unmount
+		return () => {
+			if (timeoutId) clearTimeout(timeoutId);
+		};
+	}, [isVisible, defaultHeight, translateY, opacity]);
 
 	const scrollTo = (destination: number) => {
 		"worklet";
@@ -137,7 +153,8 @@ export function BottomSheet({
 			// Find the closest snap point
 			const closestSnapPoint = findClosestSnapPoint(currentY);
 			scrollTo(closestSnapPoint);
-		});
+		})
+		.runOnJS(true); // Ensure gesture events run on JS thread for better compatibility
 
 	const rBottomSheetStyle = useAnimatedStyle(() => {
 		return {
@@ -164,7 +181,9 @@ export function BottomSheet({
 			transparent
 			statusBarTranslucent
 			animationType="none"
-			// className="bg-white dark:bg-gray-900"
+			onRequestClose={animateClose}
+			supportedOrientations={["portrait"]}
+			hardwareAccelerated
 		>
 			<GestureHandlerRootView className="flex-1">
 				<Animated.View
@@ -188,11 +207,21 @@ export function BottomSheet({
 									width: "100%",
 									position: "absolute",
 									top: SCREEN_HEIGHT,
+									borderTopLeftRadius: 20,
+									borderTopRightRadius: 20,
+									shadowColor: "#000",
+									shadowOffset: {
+										width: 0,
+										height: -2,
+									},
+									shadowOpacity: 0.25,
+									shadowRadius: 3.84,
+									elevation: 5,
 								},
 								rBottomSheetStyle,
 								style,
 							]}
-							className="bg-background rounded-t-3xl"
+							className="bg-background"
 						>
 							{/* Handle */}
 							<View className="w-10 h-1.5 bg-gray-300 dark:bg-gray-600 self-center mt-3 rounded-full" />
