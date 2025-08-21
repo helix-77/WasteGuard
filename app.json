@@ -21,7 +21,7 @@
 				"dark": {
 					"backgroundColor": "#000000",
 					"resizeMode": "cover",
-					"image": "./assets/splash-dark.png"
+					"image": "./assets/splash.png"
 				}
 			},
 			"icon": {
@@ -31,6 +31,7 @@
 			"bundleIdentifier": "com.helix77.waste-guard"
 		},
 		"android": {
+			"edgeToEdgeEnabled": true,
 			"adaptiveIcon": {
 				"foregroundImage": "./assets/adaptive-icon.png"
 			},
@@ -41,9 +42,20 @@
 				"dark": {
 					"backgroundColor": "#000000",
 					"resizeMode": "cover",
-					"image": "./assets/splash-dark.png"
+					"image": "./assets/splash.png"
 				}
-			}
+			},
+			"permissions": [
+				"android.permission.READ_EXTERNAL_STORAGE",
+				"android.permission.WRITE_EXTERNAL_STORAGE",
+				"android.permission.ACCESS_MEDIA_LOCATION",
+				"android.permission.CAMERA",
+				"android.permission.READ_EXTERNAL_STORAGE",
+				"android.permission.WRITE_EXTERNAL_STORAGE",
+				"android.permission.ACCESS_MEDIA_LOCATION",
+				"android.permission.CAMERA"
+			],
+			"package": "com.helix77.wasteguard"
 		},
 		"experiments": {
 			"typedRoutes": true
