@@ -48,6 +48,7 @@
 		"react-dom": "19.0.0",
 		"react-hook-form": "^7.55.0",
 		"react-native": "0.79.5",
+		"react-native-css-interop": "^0.1.22",
 		"react-native-gesture-handler": "~2.24.0",
 		"react-native-get-random-values": "~1.11.0",
 		"react-native-keyboard-controller": "^1.18.2",
