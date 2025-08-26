@@ -2,7 +2,7 @@ import { TouchableOpacity, View } from "react-native";
 import React from "react";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Text } from "../ui/text";
-import { H3, H4 } from "../ui/typography";
+import { H4 } from "../ui/typography";
 import { ChevronRight } from "@/lib/icons/profileIcons";
 
 export interface SettingsItem {
@@ -10,43 +10,63 @@ export interface SettingsItem {
 	icon: React.ReactNode;
 	onPress?: () => void;
 	showChevron?: boolean;
-	customAction?: React.ReactNode;
 }
 
 interface SettingsSectionProps {
 	items: SettingsItem[];
 }
 
-const SettingsSection: React.FC<SettingsSectionProps> = ({ items }) => {
-	return (
-		<Card className="mx-4 mb-4">
-			<CardHeader>
-				<H4 className="text-muted-foreground font-bold">Settings</H4>
-			</CardHeader>
+const SettingsItem: React.FC<{
+	item: SettingsItem;
+	isLast: boolean;
+}> = React.memo(({ item, isLast }) => (
+	<TouchableOpacity
+		className={`flex-row items-center justify-between py-4 ${
+			!isLast ? "border-b border-border/50" : ""
+		}`}
+		onPress={item.onPress}
+		disabled={!item.onPress}
+		activeOpacity={0.7}
+	>
+		<View className="flex-row items-center flex-1">
+			<View className="mr-4 w-6 items-center">{item.icon}</View>
+			<Text className="text-foreground text-base">{item.title}</Text>
+		</View>
 
-			<CardContent className="pt-0">
-				{items.map((item, index) => (
-					<TouchableOpacity
-						key={index}
-						className="flex-row items-center justify-between py-3 border-b border-border last:border-b-0"
-						onPress={item.onPress}
-						disabled={!item.onPress}
-					>
-						<View className="flex-row items-center flex-1">
-							<View className="mr-3">{item.icon}</View>
-							<Text className="text-foreground">{item.title}</Text>
-						</View>
+		<View className="flex-row items-center">
+			{item.showChevron ? (
+				<ChevronRight size={20} className="text-muted-foreground" />
+			) : null}
+		</View>
+	</TouchableOpacity>
+));
 
-						{item.customAction ? (
-							item.customAction
-						) : item.showChevron ? (
-							<ChevronRight size={20} className="text-muted-foreground" />
-						) : null}
-					</TouchableOpacity>
-				))}
-			</CardContent>
-		</Card>
-	);
-};
+SettingsItem.displayName = "SettingsItem";
+
+const SettingsSection: React.FC<SettingsSectionProps> = React.memo(
+	({ items }) => {
+		return (
+			<View className="px-4 pb-2">
+				<Card className="shadow-sm">
+					<CardHeader className="pb-2">
+						<H4 className="text-foreground font-bold">Settings</H4>
+					</CardHeader>
+
+					<CardContent className="pt-0">
+						{items.map((item, index) => (
+							<SettingsItem
+								key={`setting-${index}-${item.title}`}
+								item={item}
+								isLast={index === items.length - 1}
+							/>
+						))}
+					</CardContent>
+				</Card>
+			</View>
+		);
+	},
+);
+
+SettingsSection.displayName = "SettingsSection";
 
 export default SettingsSection;

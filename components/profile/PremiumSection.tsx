@@ -17,55 +17,63 @@ interface PremiumSectionProps {
 	onUpgrade?: () => void;
 }
 
-const PremiumSection: React.FC<PremiumSectionProps> = ({
-	onUpgrade,
-	features,
-}) => {
-	const handleUpgrade = () => {
-		if (onUpgrade) {
-			onUpgrade();
-		} else {
-			//Todo
-		}
-	};
+const PremiumSection: React.FC<PremiumSectionProps> = React.memo(
+	({ onUpgrade, features }) => {
+		const handleUpgrade = React.useCallback(() => {
+			if (onUpgrade) {
+				onUpgrade();
+			}
+		}, [onUpgrade]);
 
-	// console.log(features);
-
-	return (
-		<Card className="mx-4 mb-4">
-			<CardHeader>
-				<View className="flex-row items-center justify-between">
-					<H4 className="text-foreground font-bold">Upgrade to Premium</H4>
-					<Crown size={24} color={"#eab308"} />
-				</View>
-				<Muted>Unlock advanced features and insights</Muted>
-			</CardHeader>
-
-			<CardContent className="pt-0">
-				{features.map((feature, index) => (
-					<View key={index} className="flex-row items-center pb-3 last:mb-0">
-						<View className="mr-3">{feature.icon}</View>
-						<View className="flex-1">
-							<Text className="text-foreground text-sm font-medium">
-								{feature.title}
-							</Text>
-							<Muted className="text-xs">{feature.description}</Muted>
+		return (
+			<View className="px-4 mb-2">
+				<Card className="shadow-sm">
+					<CardHeader className="pb-4">
+						<View className="flex-row items-center justify-between mb-2">
+							<H4 className="text-foreground font-bold">Upgrade to Premium</H4>
+							<Crown size={24} color={"#eab308"} />
 						</View>
-					</View>
-				))}
+						<Muted className="text-sm">
+							Unlock advanced features and insights
+						</Muted>
+					</CardHeader>
 
-				<Button
-					variant={"glow"}
-					size="sm"
-					className="mt-2 flex-row items-center gap-2"
-					onPress={handleUpgrade}
-				>
-					<Crown size={16} />
-					<Text className="text-black font-medium">Upgrade Now</Text>
-				</Button>
-			</CardContent>
-		</Card>
-	);
-};
+					<CardContent className="pt-0">
+						<View className="space-y-4 mb-6">
+							{features?.map((feature, index) => (
+								<View
+									key={`feature-${index}`}
+									className="flex-row items-start py-2"
+								>
+									<View className="mr-4 mt-0.5">{feature.icon}</View>
+									<View className="flex-1">
+										<Text className="text-foreground text-sm font-medium mb-1">
+											{feature.title}
+										</Text>
+										<Muted className="text-xs leading-4">
+											{feature.description}
+										</Muted>
+									</View>
+								</View>
+							))}
+						</View>
+
+						<Button
+							variant={"glow"}
+							size="lg"
+							className="w-full flex-row items-center justify-center gap-2 py-4"
+							onPress={handleUpgrade}
+						>
+							<Crown size={18} />
+							<Text className="text-black font-semibold">Upgrade Now</Text>
+						</Button>
+					</CardContent>
+				</Card>
+			</View>
+		);
+	},
+);
+
+PremiumSection.displayName = "PremiumSection";
 
 export default PremiumSection;

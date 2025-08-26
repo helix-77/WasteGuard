@@ -1,7 +1,6 @@
 import "../global.css";
 
 import { Stack } from "expo-router";
-
 import { AuthProvider } from "@/context/supabase-provider";
 import { QueryProvider } from "@/lib/providers/query-provider";
 import { useColorScheme } from "@/lib/useColorScheme";
@@ -23,6 +22,7 @@ import { AppSplashScreen } from "@/components/AppSplashScreen";
 // Keep the splash screen visible until we're ready to render
 SplashScreen.preventAutoHideAsync();
 
+// Memoize themes for performance
 const LIGHT_THEME: Theme = {
 	...DefaultTheme,
 	colors: NAV_THEME.light,
@@ -49,6 +49,12 @@ export default function RootLayout() {
 	const [isColorSchemeLoaded, setIsColorSchemeLoaded] = React.useState(false);
 	const [appIsReady, setAppIsReady] = React.useState(false);
 
+	// Memoize theme selection for performance
+	const theme = React.useMemo(
+		() => (isDarkColorScheme ? DARK_THEME : LIGHT_THEME),
+		[isDarkColorScheme],
+	);
+
 	useIsomorphicLayoutEffect(() => {
 		if (hasMounted.current) {
 			return;
@@ -69,30 +75,52 @@ export default function RootLayout() {
 		}
 	}, [appIsReady, isColorSchemeLoaded]);
 
+	const handleAppReady = React.useCallback(() => {
+		setAppIsReady(true);
+	}, []);
+
 	if (!isColorSchemeLoaded) {
 		return null;
 	}
 
 	if (!appIsReady) {
-		return (
-			<AppSplashScreen
-				onReady={() => {
-					setAppIsReady(true);
-				}}
-			/>
-		);
+		return <AppSplashScreen onReady={handleAppReady} />;
 	}
 
 	return (
 		<QueryProvider>
 			<AuthProvider>
 				<GestureHandlerRootView style={{ flex: 1 }} onLayout={onLayoutRootView}>
-					<ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
+					<ThemeProvider value={theme}>
 						<StatusBar style={isDarkColorScheme ? "light" : "dark"} />
-						<Stack screenOptions={{ headerShown: false }}>
-							<Stack.Screen name="welcome" />
-							<Stack.Screen name="(auth)" />
-							<Stack.Screen name="(protected)" />
+						<Stack
+							screenOptions={{
+								headerShown: false,
+								animation: "slide_from_right",
+								animationDuration: 200, // Faster navigation
+							}}
+						>
+							<Stack.Screen
+								name="welcome"
+								options={{
+									animation: "fade",
+									gestureEnabled: false,
+								}}
+							/>
+							<Stack.Screen
+								name="(auth)"
+								options={{
+									animation: "slide_from_right",
+									gestureEnabled: false,
+								}}
+							/>
+							<Stack.Screen
+								name="(protected)"
+								options={{
+									animation: "slide_from_right",
+									gestureEnabled: false,
+								}}
+							/>
 						</Stack>
 					</ThemeProvider>
 				</GestureHandlerRootView>
