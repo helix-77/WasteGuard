@@ -18,10 +18,8 @@ import * as FileSystem from "expo-file-system";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { BottomSheet } from "./bottom-sheet";
-import { Package } from "@/lib/icons/Package";
-import { Tag } from "@/lib/icons/Tag";
-import { Info } from "@/lib/icons/Info";
-import { BlockQuote } from "./ui/typography";
+import { Package, Tag, Info } from "lucide-react-native";
+import { Icon } from "@/components/ui/icon";
 import { ProductService } from "@/lib/services/productService";
 import { useMarkProductAsUsed } from "@/lib/hooks/useProductsQuery";
 
@@ -471,9 +469,12 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
 							</View>
 						</View>
 						<View className="rounded-xl p-2">
-							<BlockQuote className="text-muted-foreground text-xs leading-6">
+							<Text
+								variant="block-quote"
+								className="text-muted-foreground text-xs leading-6"
+							>
 								{product.notes}
-							</BlockQuote>
+							</Text>
 						</View>
 					</View>
 				)}

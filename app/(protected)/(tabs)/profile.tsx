@@ -22,7 +22,8 @@ import {
 	Users,
 	Headphones,
 	Heart,
-} from "@/lib/icons/profileIcons";
+} from "lucide-react-native";
+import { Icon } from "@/components/ui/icon";
 import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -43,32 +44,32 @@ const Profile: React.FC = () => {
 			{
 				title: "Add Unlimited Items",
 				description: "Add and manage unlimited products without any limits",
-				icon: <PlusCircle size={20} className="text-blue-500" />,
+				icon: <Icon as={PlusCircle} size={20} className="text-blue-500" />,
 			},
 			{
 				title: "Ad-Free Experience",
 				description: "Enjoy a distraction-free interface",
-				icon: <PartyPopper size={20} className="text-red-500" />,
+				icon: <Icon as={PartyPopper} size={20} className="text-red-500" />,
 			},
 			{
 				title: "Family Sharing",
 				description: "Sync across multiple accounts/devices",
-				icon: <Users size={20} className="text-purple-500" />,
+				icon: <Icon as={Users} size={20} className="text-purple-500" />,
 			},
 			{
 				title: "Advanced Analytics",
 				description: "Detailed waste reduction insights",
-				icon: <TrendingUp size={20} className="text-green-600" />,
+				icon: <Icon as={TrendingUp} size={20} className="text-green-600" />,
 			},
 			{
 				title: "Priority Support",
 				description: "Faster responses and feature requests prioritized",
-				icon: <Headphones size={20} className="text-yellow-600" />,
+				icon: <Icon as={Headphones} size={20} className="text-yellow-600" />,
 			},
 			{
 				title: "Support the Developer",
 				description: "Help maintain and improve the app",
-				icon: <Heart size={20} className="text-orange-500" />,
+				icon: <Icon as={Heart} size={20} className="text-orange-500" />,
 			},
 		],
 		[],
@@ -85,7 +86,7 @@ const Profile: React.FC = () => {
 			// },
 			{
 				title: "Edit Profile",
-				icon: <User size={20} className="text-foreground" />,
+				icon: <Icon as={User} size={20} className="text-foreground" />,
 				onPress: () => {
 					router.push("/(protected)/profileScreens/editProfile");
 				},
@@ -93,7 +94,7 @@ const Profile: React.FC = () => {
 			},
 			{
 				title: "Edit Login Credentials",
-				icon: <Key size={20} className="text-foreground" />,
+				icon: <Icon as={Key} size={20} className="text-foreground" />,
 				onPress: () => {
 					router.push("/(protected)/profileScreens/editCredentials");
 				},
@@ -101,7 +102,7 @@ const Profile: React.FC = () => {
 			},
 			{
 				title: "About",
-				icon: <Info size={20} className="text-foreground" />,
+				icon: <Icon as={Info} size={20} className="text-foreground" />,
 				onPress: () => {
 					router.push("/(protected)/profileScreens/about");
 				},
@@ -109,7 +110,7 @@ const Profile: React.FC = () => {
 			},
 			{
 				title: "Privacy Policy",
-				icon: <Shield size={20} className="text-foreground" />,
+				icon: <Icon as={Shield} size={20} className="text-foreground" />,
 				onPress: () => {
 					router.push("/(protected)/profileScreens/privacyPolicy");
 				},

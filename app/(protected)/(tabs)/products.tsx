@@ -11,7 +11,14 @@ import {
 	RefreshControl,
 } from "react-native";
 import { SafeAreaView } from "@/components/safe-area-view";
-import { Search, X, AlertCircle, Trash2, RefreshCw } from "lucide-react-native";
+import {
+	Search,
+	X,
+	AlertCircle,
+	Trash2,
+	RefreshCw,
+	Settings,
+} from "lucide-react-native";
 import {
 	GestureHandlerRootView,
 	Swipeable,
@@ -27,7 +34,6 @@ import {
 import { ProductItem } from "@/lib/services/productService";
 import ProductDetails from "@/components/ProductDetails";
 import Clear from "@/lib/icons/Clear";
-import { Settings } from "@/lib/icons/profileIcons";
 
 const defaultCategories = [
 	"All",

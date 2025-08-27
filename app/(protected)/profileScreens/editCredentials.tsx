@@ -3,7 +3,7 @@ import { View, ScrollView, TextInput, Alert } from "react-native";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
-import { H4, Muted } from "@/components/ui/typography";
+
 import { Lock, Eye, EyeOff } from "lucide-react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { TouchableOpacity } from "react-native";
@@ -90,8 +90,12 @@ const EditCredentials = () => {
 				<View className="px-4">
 					<Card className="shadow-sm mb-6">
 						<CardHeader>
-							<H4 className="text-foreground font-bold">Change Password</H4>
-							<Muted className="text-sm">Update your account password</Muted>
+							<Text variant="h4" className="text-foreground font-bold">
+								Change Password
+							</Text>
+							<Text variant="muted" className="text-sm">
+								Update your account password
+							</Text>
 						</CardHeader>
 
 						<CardContent>
@@ -145,7 +149,9 @@ const EditCredentials = () => {
 					{/* Security Tips */}
 					<Card className="shadow-sm mb-6">
 						<CardHeader>
-							<H4 className="text-foreground font-bold">Security Tips</H4>
+							<Text variant="h4" className="text-foreground font-bold">
+								Security Tips
+							</Text>
 						</CardHeader>
 
 						<CardContent>

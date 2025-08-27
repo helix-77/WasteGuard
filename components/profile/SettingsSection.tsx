@@ -2,8 +2,9 @@ import { TouchableOpacity, View } from "react-native";
 import React from "react";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Text } from "../ui/text";
-import { H4 } from "../ui/typography";
-import { ChevronRight } from "@/lib/icons/profileIcons";
+
+import { ChevronRight } from "lucide-react-native";
+import { Icon } from "@/components/ui/icon";
 
 export interface SettingsItem {
 	title: string;
@@ -35,7 +36,7 @@ const SettingsItem: React.FC<{
 
 		<View className="flex-row items-center">
 			{item.showChevron ? (
-				<ChevronRight size={20} className="text-muted-foreground" />
+				<Icon as={ChevronRight} size={20} className="text-muted-foreground" />
 			) : null}
 		</View>
 	</TouchableOpacity>
@@ -49,7 +50,9 @@ const SettingsSection: React.FC<SettingsSectionProps> = React.memo(
 			<View className="px-4 pb-2">
 				<Card className="shadow-sm">
 					<CardHeader className="pb-2">
-						<H4 className="text-foreground font-bold">Settings</H4>
+						<Text variant="h4" className="text-foreground font-bold">
+							Settings
+						</Text>
 					</CardHeader>
 
 					<CardContent className="pt-0">

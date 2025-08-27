@@ -5,7 +5,8 @@ import { LegendList } from "@legendapp/list";
 import { Card, CardContent } from "@/components/ui/card";
 import { Text } from "@/components/ui/text";
 import { Badge } from "@/components/ui/badge";
-import { ClockIcon } from "@/lib/icons";
+import { Clock, ClockIcon } from "lucide-react-native";
+import { Icon } from "@/components/ui/icon";
 
 interface AlertItem {
 	id: string;

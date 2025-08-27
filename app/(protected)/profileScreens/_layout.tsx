@@ -1,4 +1,5 @@
-import { ChevronLeft } from "@/lib/icons/profileIcons";
+import { ChevronLeft } from "lucide-react-native";
+import { Icon } from "@/components/ui/icon";
 import { Stack, useRouter } from "expo-router";
 import { TouchableOpacity, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";

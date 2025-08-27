@@ -1,8 +1,9 @@
 import React, { useEffect } from "react";
 import { View, Image } from "react-native";
-import { H1, Muted } from "@/components/ui/typography";
-import { useColorScheme } from "@/lib/useColorScheme";
+
 import * as SplashScreen from "expo-splash-screen";
+import { useColorScheme } from "nativewind";
+import { Text } from "./ui/text";
 
 interface SplashScreenProps {
 	onReady: () => void;
@@ -47,8 +48,12 @@ export function AppSplashScreen({ onReady }: SplashScreenProps) {
 		<View className="flex-1 items-center justify-center bg-background">
 			<View className="items-center justify-center">
 				<Image source={appIcon} className="w-24 h-24 rounded-xl mb-4" />
-				<H1 className="text-foreground text-center mb-2">WasteGuard</H1>
-				<Muted className="text-center px-8">Reduce waste, save resources</Muted>
+				<Text variant="h1" className="text-foreground text-center mb-2">
+					WasteGuard
+				</Text>
+				<Text variant="muted" className="text-center px-8">
+					Reduce waste, save resources
+				</Text>
 			</View>
 		</View>
 	);

@@ -2,7 +2,7 @@ import { View, ScrollView } from "react-native";
 import React from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Text } from "@/components/ui/text";
-import { H4, Muted } from "@/components/ui/typography";
+
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const PrivacyPolicy = () => {
@@ -55,10 +55,12 @@ const PrivacyPolicy = () => {
 					{/* Header */}
 					<Card className="shadow-sm mb-6">
 						<CardHeader>
-							<H4 className="text-foreground font-bold text-xl">
+							<Text variant="h4" className="text-foreground font-bold text-xl">
 								Privacy Policy
-							</H4>
-							<Muted className="text-sm">Last updated: January 2024</Muted>
+							</Text>
+							<Text variant="muted" className="text-sm">
+								Last updated: January 2024
+							</Text>
 						</CardHeader>
 
 						<CardContent>
@@ -74,9 +76,9 @@ const PrivacyPolicy = () => {
 					{sections.map((section, index) => (
 						<Card key={index} className="shadow-sm mb-4">
 							<CardHeader>
-								<H4 className="text-foreground font-semibold">
+								<Text variant="h4" className="text-foreground font-semibold">
 									{section.title}
-								</H4>
+								</Text>
 							</CardHeader>
 
 							<CardContent>
@@ -90,7 +92,9 @@ const PrivacyPolicy = () => {
 					{/* Contact */}
 					<Card className="shadow-sm">
 						<CardHeader>
-							<H4 className="text-foreground font-semibold">Contact Us</H4>
+							<Text variant="h4" className="text-foreground font-semibold">
+								Contact Us
+							</Text>
 						</CardHeader>
 
 						<CardContent>

@@ -4,17 +4,20 @@ import { View, Platform } from "react-native";
 import { Home, User, Plus, ShoppingBag } from "lucide-react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { useColorScheme } from "@/lib/useColorScheme";
-import { NAV_THEME } from "@/lib/constants";
+import { NAV_THEME, THEME } from "@/lib/theme";
 import { useCameraContext } from "@/context/camera-context";
+import { useColorScheme } from "nativewind";
 
 export default function TabsLayout() {
-	const { isDarkColorScheme } = useColorScheme();
+	const { colorScheme } = useColorScheme();
+
 	const { isCameraOpen } = useCameraContext();
 	const insets = useSafeAreaInsets();
 
-	// Use navigation theme colors for consistency
-	const theme = isDarkColorScheme ? NAV_THEME.dark : NAV_THEME.light;
+	// Use theme colors for consistency
+	const isDarkColorScheme = colorScheme === "dark";
+	const currentTheme = isDarkColorScheme ? THEME.dark : THEME.light;
+	const navTheme = isDarkColorScheme ? NAV_THEME.dark : NAV_THEME.light;
 
 	const tabBarStyle = React.useMemo(() => {
 		if (isCameraOpen) {
@@ -24,18 +27,18 @@ export default function TabsLayout() {
 		return {
 			paddingBottom: Platform.OS === "ios" ? insets.bottom : 8,
 			height: Platform.OS === "ios" ? 80 + insets.bottom : 60,
-			backgroundColor: theme.background,
-			borderTopColor: theme.border,
+			backgroundColor: currentTheme.background,
+			borderTopColor: currentTheme.border,
 			borderTopWidth: 0.5,
 		};
-	}, [isCameraOpen, insets.bottom, theme]);
+	}, [isCameraOpen, insets.bottom, currentTheme]);
 
 	return (
 		<Tabs
 			screenOptions={{
 				headerShown: false,
 				tabBarStyle,
-				tabBarActiveTintColor: theme.primary,
+				tabBarActiveTintColor: currentTheme.primary,
 				tabBarInactiveTintColor: isDarkColorScheme ? "#6B7280" : "#9CA3AF",
 				tabBarLabelStyle: {
 					fontSize: 12,
@@ -66,18 +69,18 @@ export default function TabsLayout() {
 								width: 56,
 								height: 56,
 								borderRadius: 28,
-								backgroundColor: theme.primary,
+								backgroundColor: currentTheme.primary,
 								justifyContent: "center",
 								alignItems: "center",
 								marginBottom: Platform.OS === "ios" ? 20 : 16,
-								shadowColor: theme.primary,
+								shadowColor: currentTheme.primary,
 								shadowOffset: { width: 0, height: 4 },
 								shadowOpacity: 0.3,
 								shadowRadius: 8,
 								elevation: 8,
 							}}
 						>
-							<Plus size={28} color={theme.background} />
+							<Plus size={28} color={currentTheme.background} />
 						</View>
 					),
 				}}

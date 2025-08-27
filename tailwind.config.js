@@ -2,9 +2,12 @@ const { hairlineWidth } = require("nativewind/theme");
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-	// NOTE: Update this to include the paths to all of your component files.
-	content: ["./app/**/*.{js,jsx,ts,tsx}", "./components/**/*.{js,jsx,ts,tsx}"],
 	darkMode: "class",
+	content: [
+		"./app/**/*.{ts,tsx}",
+		"./components/**/*.{ts,tsx}",
+		"./node_modules/@rnr/**/*.{ts,tsx}",
+	],
 	presets: [require("nativewind/preset")],
 	theme: {
 		extend: {
@@ -42,25 +45,33 @@ module.exports = {
 					DEFAULT: "hsl(var(--card))",
 					foreground: "hsl(var(--card-foreground))",
 				},
-				brand: {
-					DEFAULT: "#22c55e",
-					50: "#f0fdf4",
-					100: "#dcfce7",
-					200: "#bbf7d0",
-					300: "#86efac",
-					400: "#4ade80",
-					500: "#22c55e",
-					600: "#16a34a",
-					700: "#15803d",
-					800: "#166534",
-					900: "#14532d",
-					950: "#052e16",
-				},
+			},
+			borderRadius: {
+				lg: "var(--radius)",
+				md: "calc(var(--radius) - 2px)",
+				sm: "calc(var(--radius) - 4px)",
 			},
 			borderWidth: {
 				hairline: hairlineWidth(),
 			},
+			keyframes: {
+				"accordion-down": {
+					from: { height: "0" },
+					to: { height: "var(--radix-accordion-content-height)" },
+				},
+				"accordion-up": {
+					from: { height: "var(--radix-accordion-content-height)" },
+					to: { height: "0" },
+				},
+			},
+			animation: {
+				"accordion-down": "accordion-down 0.2s ease-out",
+				"accordion-up": "accordion-up 0.2s ease-out",
+			},
 		},
 	},
-	plugins: [],
+	future: {
+		hoverOnlyWhenSupported: true,
+	},
+	plugins: [require("tailwindcss-animate")],
 };

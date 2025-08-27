@@ -2,8 +2,9 @@ import { TouchableOpacity, View, Linking } from "react-native";
 import React from "react";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Text } from "../ui/text";
-import { H4 } from "../ui/typography";
+
 import { ChevronRight, Mail, Phone } from "lucide-react-native";
+import { Icon } from "@/components/ui/icon";
 
 interface ContactSectionProps {
 	supportEmail?: string;
@@ -39,7 +40,9 @@ const ContactSection: React.FC<ContactSectionProps> = React.memo(
 			<View className="px-4 mb-3">
 				<Card className="shadow-sm">
 					<CardHeader className="pb-2">
-						<H4 className="text-foreground font-bold">Contact</H4>
+						<Text variant="h4" className="text-foreground font-bold">
+							Contact
+						</Text>
 					</CardHeader>
 
 					<CardContent className="pt-0">
@@ -50,11 +53,15 @@ const ContactSection: React.FC<ContactSectionProps> = React.memo(
 						>
 							<View className="flex-row items-center flex-1">
 								<View className="mr-4 w-6 items-center">
-									<Mail size={20} className="text-foreground" />
+									<Icon as={Mail} size={20} className="text-foreground" />
 								</View>
 								<Text className="text-foreground text-base">Email Support</Text>
 							</View>
-							<ChevronRight size={20} className="text-muted-foreground" />
+							<Icon
+								as={ChevronRight}
+								size={20}
+								className="text-muted-foreground"
+							/>
 						</TouchableOpacity>
 
 						<TouchableOpacity
@@ -64,11 +71,15 @@ const ContactSection: React.FC<ContactSectionProps> = React.memo(
 						>
 							<View className="flex-row items-center flex-1">
 								<View className="mr-4 w-6 items-center">
-									<Phone size={20} className="text-foreground" />
+									<Icon as={Phone} size={20} className="text-foreground" />
 								</View>
 								<Text className="text-foreground text-base">Phone Support</Text>
 							</View>
-							<ChevronRight size={20} className="text-muted-foreground" />
+							<Icon
+								as={ChevronRight}
+								size={20}
+								className="text-muted-foreground"
+							/>
 						</TouchableOpacity>
 					</CardContent>
 				</Card>

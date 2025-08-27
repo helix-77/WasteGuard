@@ -3,7 +3,7 @@ import { View, ScrollView, TextInput } from "react-native";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
-import { H4, Muted } from "@/components/ui/typography";
+
 import { User, Mail, Phone, MapPin } from "lucide-react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAuth } from "@/context/supabase-provider";
@@ -72,10 +72,12 @@ export default function EditProfile({}: EditProfileProps) {
 				<View className="px-4">
 					<Card className="shadow-sm mb-6">
 						<CardHeader>
-							<H4 className="text-foreground font-bold">
+							<Text variant="h4" className="text-foreground font-bold">
 								Personal Information
-							</H4>
-							<Muted className="text-sm">Update your personal details</Muted>
+							</Text>
+							<Text variant="muted" className="text-sm">
+								Update your personal details
+							</Text>
 						</CardHeader>
 
 						<CardContent>

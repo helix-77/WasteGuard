@@ -6,9 +6,9 @@ import { Image } from "@/components/image";
 import { SafeAreaView } from "@/components/safe-area-view";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
-import { H1, Muted } from "@/components/ui/typography";
-import { useColorScheme } from "@/lib/useColorScheme";
-import { ThemeToggle } from "@/components/ui/ThemeToggle";
+
+import { ThemeToggle } from "@/components/theme-toggle";
+import { useColorScheme } from "nativewind";
 
 export default function WelcomeScreen() {
 	const router = useRouter();
@@ -47,17 +47,19 @@ export default function WelcomeScreen() {
 				className="flex flex-1"
 			>
 				<View className="flex flex-row gap-2 justify-end pr-4">
-					<Muted> Change Theme</Muted>
+					<Text variant="muted"> Change Theme</Text>
 					<ThemeToggle />
 				</View>
 				<View className="flex flex-1 items-center justify-center gap-y-4 web:m-4">
 					<Image source={appIcon} className="w-16 h-16 rounded-xl" />
-					<H1 className="text-center">WasteGuard</H1>
-					<Muted className="text-center">
+					<Text variant="h1" className="text-center">
+						WasteGuard
+					</Text>
+					<Text variant="muted" className="text-center">
 						An App that help users reduce food, grocery and cosmetics waste by
 						tracking expiry dates, suggesting better usage and recipes, and
 						managing pantry inventory.
-					</Muted>
+					</Text>
 				</View>
 				<View className="flex flex-col gap-y-4 web:m-4">
 					<Button

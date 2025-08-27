@@ -1,7 +1,7 @@
 import React from "react";
 import { View, ScrollView, RefreshControl } from "react-native";
 import { SafeAreaView } from "@/components/safe-area-view";
-import { H1, Muted } from "@/components/ui/typography";
+
 import { StatsCard } from "@/components/dashboard/stats-card";
 import { RecentItems } from "@/components/dashboard/recent-items";
 import { AlertSection } from "@/components/dashboard/alert-section";
@@ -120,12 +120,15 @@ export default function Home() {
 				<View className="px-6 py-4">
 					{/* Header */}
 					<View className="mb-8">
-						<H1 className="text-3xl font-bold text-foreground mb-2">
+						<Text
+							variant="h1"
+							className="text-3xl font-bold text-foreground mb-2"
+						>
 							Good morning! 🌱
-						</H1>
-						<Muted className="text-base">
+						</Text>
+						<Text variant="muted" className="text-base">
 							Let&apos;s keep track of your items and reduce waste together
-						</Muted>
+						</Text>
 					</View>
 
 					{/* Stats Cards */}
@@ -170,7 +173,7 @@ export default function Home() {
 								title="Usage Efficiency"
 								value={`${analyticsData.usagePercentage.toFixed(1)}%`}
 								description={`${analyticsData.productsUsedBeforeExpiry} saved from waste`}
-								variant="success"
+								variant="success-glow"
 								onPress={() => handleStatsPress("efficiency")}
 							/>
 						</View>

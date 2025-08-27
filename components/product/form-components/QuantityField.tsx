@@ -4,7 +4,8 @@ import { Control, Controller, FieldError } from "react-hook-form";
 import { Input } from "../../ui/input";
 import { Text } from "../../ui/text";
 import { ProductFormData } from "../ProductForm";
-import { Hash } from "@/lib/icons/Hash";
+import { Hash } from "lucide-react-native";
+import { Icon } from "@/components/ui/icon";
 
 interface QuantityFieldProps {
 	control: Control<ProductFormData>;

@@ -2,7 +2,7 @@ import { View, ScrollView } from "react-native";
 import React from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Text } from "@/components/ui/text";
-import { H4, Muted } from "@/components/ui/typography";
+
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Leaf, Target, Users, Award } from "lucide-react-native";
 
@@ -53,8 +53,12 @@ const About = () => {
 							<View className="w-16 h-16 bg-primary rounded-2xl items-center justify-center mb-4">
 								<Leaf size={32} className="text-white" />
 							</View>
-							<H4 className="text-foreground font-bold text-xl">WasteGuard</H4>
-							<Muted className="text-center mt-2">Version 1.0.0</Muted>
+							<Text variant="h4" className="text-foreground font-bold text-xl">
+								WasteGuard
+							</Text>
+							<Text variant="muted" className="text-center mt-2">
+								Version 1.0.0
+							</Text>
 						</CardHeader>
 
 						<CardContent>
@@ -69,7 +73,9 @@ const About = () => {
 					{/* Features */}
 					<Card className="shadow-sm mb-6">
 						<CardHeader>
-							<H4 className="text-foreground font-bold">Key Features</H4>
+							<Text variant="h4" className="text-foreground font-bold">
+								Key Features
+							</Text>
 						</CardHeader>
 
 						<CardContent>
@@ -87,9 +93,9 @@ const About = () => {
 										<Text className="text-foreground font-medium mb-1">
 											{feature.title}
 										</Text>
-										<Muted className="text-sm leading-5">
+										<Text variant="muted" className="text-sm leading-5">
 											{feature.description}
-										</Muted>
+										</Text>
 									</View>
 								</View>
 							))}
@@ -99,17 +105,19 @@ const About = () => {
 					{/* Developer Info */}
 					<Card className="shadow-sm">
 						<CardHeader>
-							<H4 className="text-foreground font-bold">Developer</H4>
+							<Text variant="h4" className="text-foreground font-bold">
+								Developer
+							</Text>
 						</CardHeader>
 
 						<CardContent>
 							<Text className="text-foreground mb-2">
 								Developed with ❤️ by MD Atik Mouhtasim Rahi
 							</Text>
-							<Muted className="text-sm leading-5">
+							<Text variant="muted" className="text-sm leading-5">
 								Passionate about creating sustainable solutions that help reduce
 								food waste and promote environmental consciousness.
-							</Muted>
+							</Text>
 						</CardContent>
 					</Card>
 				</View>

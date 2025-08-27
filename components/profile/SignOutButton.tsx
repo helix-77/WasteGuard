@@ -2,7 +2,8 @@ import { View, ActivityIndicator, Alert } from "react-native";
 import React from "react";
 import { Button } from "../ui/button";
 import { Text } from "../ui/text";
-import { LogOut } from "@/lib/icons/profileIcons";
+import { LogOut } from "lucide-react-native";
+import { Icon } from "@/components/ui/icon";
 
 interface SignOutButtonProps {
 	onSignOut: () => void;
@@ -43,7 +44,7 @@ const SignOutButton: React.FC<SignOutButtonProps> = React.memo(
 						<ActivityIndicator size="small" color="#ef4444" />
 					) : (
 						<>
-							<LogOut size={18} className="text-red-500 mr-2" />
+							<Icon as={LogOut} size={18} className="text-red-500 mr-2" />
 							<Text className="font-semibold text-red-500 text-base">
 								Sign Out
 							</Text>

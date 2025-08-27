@@ -1,9 +1,8 @@
 import "../global.css";
 
-import { Stack } from "expo-router";
 import { AuthProvider } from "@/context/supabase-provider";
 import { QueryProvider } from "@/lib/providers/query-provider";
-import { useColorScheme } from "@/lib/useColorScheme";
+import { Platform } from "react-native";
 
 import {
 	Theme,
@@ -11,13 +10,20 @@ import {
 	DefaultTheme,
 	DarkTheme,
 } from "@react-navigation/native";
-import { StatusBar } from "expo-status-bar";
-import * as React from "react";
-import { Platform } from "react-native";
+import { PortalHost } from "@rn-primitives/portal";
+import { HeaderRightView } from "@/components/header-right-view";
+
+import { NAV_THEME } from "@/lib/theme";
+import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { NAV_THEME } from "../lib/constants";
+import { StatusBar } from "expo-status-bar";
+import { useColorScheme } from "nativewind";
+import * as React from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { KeyboardProvider } from "react-native-keyboard-controller";
+
 import { AppSplashScreen } from "@/components/AppSplashScreen";
+import { Text } from "@/components/ui/text";
 
 // Keep the splash screen visible until we're ready to render
 SplashScreen.preventAutoHideAsync();
@@ -43,16 +49,21 @@ export {
 	ErrorBoundary,
 } from "expo-router";
 
+export const unstable_settings = {
+	// Ensure that reloading on `/modal` keeps a back button present.
+	initialRouteName: "index",
+};
+
 export default function RootLayout() {
 	const hasMounted = React.useRef(false);
-	const { isDarkColorScheme } = useColorScheme();
+	const { colorScheme } = useColorScheme();
 	const [isColorSchemeLoaded, setIsColorSchemeLoaded] = React.useState(false);
 	const [appIsReady, setAppIsReady] = React.useState(false);
 
 	// Memoize theme selection for performance
 	const theme = React.useMemo(
-		() => (isDarkColorScheme ? DARK_THEME : LIGHT_THEME),
-		[isDarkColorScheme],
+		() => (colorScheme === "dark" ? DARK_THEME : LIGHT_THEME),
+		[colorScheme],
 	);
 
 	useIsomorphicLayoutEffect(() => {
@@ -90,41 +101,71 @@ export default function RootLayout() {
 	return (
 		<QueryProvider>
 			<AuthProvider>
-				<GestureHandlerRootView style={{ flex: 1 }} onLayout={onLayoutRootView}>
-					<ThemeProvider value={theme}>
-						<StatusBar style={isDarkColorScheme ? "light" : "dark"} />
-						<Stack
-							screenOptions={{
-								headerShown: false,
-								animation: "slide_from_right",
-								animationDuration: 200, // Faster navigation
-							}}
-						>
-							<Stack.Screen
-								name="welcome"
-								options={{
-									animation: "fade",
-									gestureEnabled: false,
-								}}
-							/>
-							<Stack.Screen
-								name="(auth)"
-								options={{
+				<ThemeProvider value={theme}>
+					<StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
+					<GestureHandlerRootView
+						style={{
+							flex: 1,
+							backgroundColor: theme.colors.background,
+						}}
+						onLayout={onLayoutRootView}
+					>
+						<KeyboardProvider>
+							<Stack
+								screenOptions={{
+									headerShown: false,
 									animation: "slide_from_right",
-									gestureEnabled: false,
+									animationDuration: 200, // Faster navigation
+									headerBackTitle: "Back",
+									// headerTitle(props) {
+									// 	return (
+									// 		<Text className="ios:font-medium android:mt-1.5 text-xl">
+									// 			{toOptions(props.children.split("/").pop())}
+									// 		</Text>
+									// 	);
+									// },
+									// headerRight: () => <HeaderRightView />,
 								}}
-							/>
-							<Stack.Screen
-								name="(protected)"
-								options={{
-									animation: "slide_from_right",
-									gestureEnabled: false,
-								}}
-							/>
-						</Stack>
-					</ThemeProvider>
-				</GestureHandlerRootView>
+							>
+								<Stack.Screen
+									name="welcome"
+									options={{
+										animation: "fade",
+										gestureEnabled: false,
+									}}
+								/>
+								<Stack.Screen
+									name="(auth)"
+									options={{
+										animation: "slide_from_right",
+										gestureEnabled: false,
+									}}
+								/>
+								<Stack.Screen
+									name="(protected)"
+									options={{
+										animation: "slide_from_right",
+										gestureEnabled: false,
+									}}
+								/>
+							</Stack>
+							<PortalHost />
+						</KeyboardProvider>
+					</GestureHandlerRootView>
+				</ThemeProvider>
 			</AuthProvider>
 		</QueryProvider>
 	);
+}
+
+function toOptions(name: string) {
+	const title = name
+		.split("-")
+		.map(function (str: string) {
+			return str.replace(/\b\w/g, function (char) {
+				return char.toUpperCase();
+			});
+		})
+		.join(" ");
+	return title;
 }

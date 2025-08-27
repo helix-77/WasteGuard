@@ -2,10 +2,11 @@ import { TouchableOpacity, View } from "react-native";
 import React from "react";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { ChevronLeft, Crown, User } from "lucide-react-native";
-import { H1, H2, H3, H4, Muted, Small } from "../ui/typography";
+import { Icon } from "@/components/ui/icon";
 import { Badge } from "../ui/badge";
-import { ThemeToggle } from "../ui/ThemeToggle";
+import { ThemeToggle } from "../theme-toggle";
 import { router } from "expo-router";
+import { Text } from "../ui/text";
 
 interface ProfileHeaderProps {
 	name: string;
@@ -42,17 +43,23 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = React.memo(
 					<CardContent className="items-center pb-6 ">
 						{/* Avatar placeholder */}
 						<View className="w-20 h-20 rounded-full bg-primary items-center justify-center mb-4 shadow-lg shadow-primary/30">
-							<User size={32} className="text-white" />
+							<Icon as={User} size={32} className="text-white" />
 						</View>
 
 						{/* User info */}
 						<View className="items-center">
-							<H3 className="text-foreground font-bold mb-1 text-center">
+							<Text
+								variant="h3"
+								className="text-foreground font-bold mb-1 text-center"
+							>
 								{name}
-							</H3>
-							<Muted className="text-muted-foreground mb-3 text-center">
+							</Text>
+							<Text
+								variant="muted"
+								className="text-muted-foreground mb-3 text-center"
+							>
 								{email}
-							</Muted>
+							</Text>
 
 							{/* Premium badge */}
 							{plan && (
@@ -63,7 +70,9 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = React.memo(
 									className="flex-row items-center justify-center gap-1 px-3 py-1.5"
 								>
 									<Crown size={12} />
-									<Small className="text-black font-medium">{plan}</Small>
+									<Text variant="small" className="text-black font-medium">
+										{plan}
+									</Text>
 								</Badge>
 							)}
 						</View>

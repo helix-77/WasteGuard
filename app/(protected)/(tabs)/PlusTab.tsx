@@ -9,7 +9,7 @@ import ProductForm, {
 } from "../../../components/product/ProductForm";
 import { Card } from "../../../components/ui/card";
 import { Camera, CheckCircle, AlertCircle } from "lucide-react-native";
-import { H4, Muted } from "../../../components/ui/typography";
+
 import { useRouter } from "expo-router";
 import CameraScanner from "@/components/product/CameraScanner";
 import { useCameraContext } from "@/context/camera-context";
@@ -232,16 +232,21 @@ export default function PlusTab() {
 				keyboardShouldPersistTaps="handled"
 			>
 				<View className="p-4">
-					<H4 className="mb-6 text-center text-gray-900 dark:text-gray-100">
+					<Text
+						variant="h4"
+						className="mb-6 text-center text-gray-900 dark:text-gray-100"
+					>
 						New Item
-					</H4>
+					</Text>
 
 					<Card className="mb-6 p-5 shadow-sm">
 						{renderScanStatus()}
 
 						<View className="flex-row justify-between items-center mb-4">
 							<View className="flex-row items-center">
-								<H4 className="text-gray-900 dark:text-gray-100">Quick Scan</H4>
+								<Text variant="h4" className="text-gray-900 dark:text-gray-100">
+									Quick Scan
+								</Text>
 								<Text className="text-xs text-muted-foreground ml-1">
 									(optional)
 								</Text>
@@ -250,11 +255,15 @@ export default function PlusTab() {
 								{hasImageData && (
 									<View className="flex-row items-center">
 										<CheckCircle size={16} color="#22c55e" />
-										<Muted className="ml-1 text-green-600">Photo ✓</Muted>
+										<Text variant="muted" className="ml-1 text-green-600">
+											Photo ✓
+										</Text>
 									</View>
 								)}
 								{!hasImageData && (
-									<Muted className="text-gray-500">Ready to scan</Muted>
+									<Text variant="muted" className="text-gray-500">
+										Ready to scan
+									</Text>
 								)}
 							</View>
 						</View>

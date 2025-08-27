@@ -3,7 +3,7 @@ import React from "react";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Button } from "../ui/button";
 import { Text } from "../ui/text";
-import { H4, Muted } from "../ui/typography";
+
 import { Crown } from "lucide-react-native";
 
 export interface PremiumFeature {
@@ -30,12 +30,14 @@ const PremiumSection: React.FC<PremiumSectionProps> = React.memo(
 				<Card className="shadow-sm">
 					<CardHeader className="pb-4">
 						<View className="flex-row items-center justify-between mb-2">
-							<H4 className="text-foreground font-bold">Upgrade to Premium</H4>
+							<Text variant="h4" className="text-foreground font-bold">
+								Upgrade to Premium
+							</Text>
 							<Crown size={24} color={"#eab308"} />
 						</View>
-						<Muted className="text-sm">
+						<Text variant="muted" className="text-sm">
 							Unlock advanced features and insights
-						</Muted>
+						</Text>
 					</CardHeader>
 
 					<CardContent className="pt-0">
@@ -50,9 +52,9 @@ const PremiumSection: React.FC<PremiumSectionProps> = React.memo(
 										<Text className="text-foreground text-sm font-medium mb-1">
 											{feature.title}
 										</Text>
-										<Muted className="text-xs leading-4">
+										<Text variant="muted" className="text-xs leading-4">
 											{feature.description}
-										</Muted>
+										</Text>
 									</View>
 								</View>
 							))}

@@ -4,7 +4,8 @@ import { Control, Controller } from "react-hook-form";
 import { Text } from "../../ui/text";
 import { ProductFormData } from "../ProductForm";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { CalendarDays } from "@/lib/icons/CalendarDays";
+import { CalendarDays } from "lucide-react-native";
+import { Icon } from "@/components/ui/icon";
 
 interface ExpiryDateFieldProps {
 	control: Control<ProductFormData>;

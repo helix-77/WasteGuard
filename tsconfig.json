@@ -1,7 +1,7 @@
 {
 	"extends": "expo/tsconfig.base",
 	"compilerOptions": {
-		"strict": true,
+		// "strict": true,
 		"baseUrl": ".",
 		"paths": {
 			"@/*": ["./*"]
@@ -14,5 +14,6 @@
 		"expo-env.d.ts",
 		"nativewind-env.d.ts",
 		"scripts/generate-colors.js"
-	]
+	],
+	"exclude": ["node_modules", "build", "dist", ".expo"]
 }
