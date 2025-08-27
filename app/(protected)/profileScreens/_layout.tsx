@@ -14,7 +14,12 @@ const ScreenLayout = () => {
 			onPress={() => router.back()}
 			activeOpacity={0.7}
 		>
-			<ChevronLeft size={24} strokeWidth={2.5} className="text-primary" />
+			<Icon
+				as={ChevronLeft}
+				className="text-primary"
+				size={24}
+				strokeWidth={2.5}
+			/>
 			<Text className="text-primary text-base font-medium ml-1">Back</Text>
 		</TouchableOpacity>
 	);
@@ -38,7 +43,7 @@ const ScreenLayout = () => {
 			screenOptions={{
 				headerShown: true,
 				headerShadowVisible: false,
-				animation: "slide_from_right",
+				// animation: "slide_from_right",
 				headerStyle: {
 					backgroundColor: "transparent",
 				},

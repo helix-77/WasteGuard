@@ -108,7 +108,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
 			if (session) {
 				router.replace("/(protected)/(tabs)/home");
 			} else {
-				router.replace("/welcome");
+				router.replace("/");
 			}
 		}
 		// eslint-disable-next-line

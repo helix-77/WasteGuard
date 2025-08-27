@@ -15,9 +15,9 @@ export default function ProtectedLayout() {
 		return null;
 	}
 
-	// Redirect to welcome if not authenticated
+	// Redirect to index if not authenticated
 	if (!session) {
-		return <Redirect href="/welcome" />;
+		return <Redirect href="/" />;
 	}
 
 	return (
@@ -25,8 +25,7 @@ export default function ProtectedLayout() {
 			<Stack
 				screenOptions={{
 					headerShown: false,
-					animation: "slide_from_right",
-					animationDuration: 200, // Faster animations
+					// animationDuration: 200, // Faster animations
 				}}
 			>
 				<Stack.Screen
@@ -41,7 +40,6 @@ export default function ProtectedLayout() {
 					options={{
 						headerShown: false,
 						presentation: "card",
-						animation: "slide_from_right",
 					}}
 				/>
 			</Stack>

@@ -11,8 +11,6 @@ import {
 	DarkTheme,
 } from "@react-navigation/native";
 import { PortalHost } from "@rn-primitives/portal";
-import { HeaderRightView } from "@/components/header-right-view";
-
 import { NAV_THEME } from "@/lib/theme";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
@@ -23,7 +21,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 
 import { AppSplashScreen } from "@/components/AppSplashScreen";
-import { Text } from "@/components/ui/text";
+import { useNavigationBarTheme } from "@/lib/hooks/useNavigationBarTheme";
 
 // Keep the splash screen visible until we're ready to render
 SplashScreen.preventAutoHideAsync();
@@ -59,6 +57,9 @@ export default function RootLayout() {
 	const { colorScheme } = useColorScheme();
 	const [isColorSchemeLoaded, setIsColorSchemeLoaded] = React.useState(false);
 	const [appIsReady, setAppIsReady] = React.useState(false);
+
+	// Initialize navigation bar theme management
+	const { configureNavigationBar } = useNavigationBarTheme();
 
 	// Memoize theme selection for performance
 	const theme = React.useMemo(
@@ -114,21 +115,13 @@ export default function RootLayout() {
 							<Stack
 								screenOptions={{
 									headerShown: false,
-									animation: "slide_from_right",
-									animationDuration: 200, // Faster navigation
+									// animation: "slide_from_right",
+									// animationDuration: 200, // Faster navigation
 									headerBackTitle: "Back",
-									// headerTitle(props) {
-									// 	return (
-									// 		<Text className="ios:font-medium android:mt-1.5 text-xl">
-									// 			{toOptions(props.children.split("/").pop())}
-									// 		</Text>
-									// 	);
-									// },
-									// headerRight: () => <HeaderRightView />,
 								}}
 							>
 								<Stack.Screen
-									name="welcome"
+									name="index"
 									options={{
 										animation: "fade",
 										gestureEnabled: false,
@@ -137,14 +130,14 @@ export default function RootLayout() {
 								<Stack.Screen
 									name="(auth)"
 									options={{
-										animation: "slide_from_right",
+										// animation: "slide_from_right",
 										gestureEnabled: false,
 									}}
 								/>
 								<Stack.Screen
 									name="(protected)"
 									options={{
-										animation: "slide_from_right",
+										// animation: "slide_from_right",
 										gestureEnabled: false,
 									}}
 								/>
@@ -156,16 +149,4 @@ export default function RootLayout() {
 			</AuthProvider>
 		</QueryProvider>
 	);
-}
-
-function toOptions(name: string) {
-	const title = name
-		.split("-")
-		.map(function (str: string) {
-			return str.replace(/\b\w/g, function (char) {
-				return char.toUpperCase();
-			});
-		})
-		.join(" ");
-	return title;
 }

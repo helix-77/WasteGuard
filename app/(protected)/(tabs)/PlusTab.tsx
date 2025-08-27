@@ -225,7 +225,7 @@ export default function PlusTab() {
 	};
 
 	return (
-		<SafeAreaView className="flex-1">
+		<SafeAreaView className="flex-1 bg-background">
 			<ScrollView
 				className="flex-1"
 				showsVerticalScrollIndicator={false}

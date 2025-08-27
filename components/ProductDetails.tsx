@@ -18,10 +18,10 @@ import * as FileSystem from "expo-file-system";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { BottomSheet } from "./bottom-sheet";
-import { Package, Tag, Info } from "lucide-react-native";
-import { Icon } from "@/components/ui/icon";
+import { Package, Info } from "lucide-react-native";
 import { ProductService } from "@/lib/services/productService";
 import { useMarkProductAsUsed } from "@/lib/hooks/useProductsQuery";
+import { Icon } from "./ui/icon";
 
 interface ProductDetailsProps {
 	product: ProductItem | null;
@@ -360,7 +360,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
 						/>
 						{imageLoading && (
 							<View className="absolute inset-0 bg-gray-100 dark:bg-gray-800 rounded-xl flex items-center justify-center">
-								<View className="w-8 h-8 border-2 border-gray-300 border-t-brand-500 rounded-full animate-spin" />
+								<View className="w-8 h-8 border-2 border-gray-300 border-t-primary rounded-full animate-spin" />
 							</View>
 						)}
 					</View>
@@ -368,9 +368,9 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
 
 				{/* Category */}
 				<View className="flex-row items-center">
-					<View className="bg-brand-100 dark:bg-brand-950/50 rounded-full px-3 py-1.5 flex-row items-center">
-						<Tag size={14} className="text-brand-500 mr-1.5" />
-						<Text className="text-brand-600 dark:text-brand-400 text-sm font-medium">
+					<View className="bg-secondary dark:bg-muted rounded-full px-3 py-1.5 flex-row items-center">
+						{/* <Icon as={Tag} className="text-foreground mr-1.5" /> */}
+						<Text className="text-foreground text-sm font-medium">
 							{product.category}
 						</Text>
 					</View>
@@ -383,7 +383,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
 							? "bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 shadow-sm"
 							: isExpiringSoon
 								? "bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 shadow-sm"
-								: "bg-brand-50 dark:bg-brand-950/30 border border-brand-200 dark:border-brand-800 shadow-sm"
+								: "bg-primary/10 dark:bg-primary/20 border border-primary/20 dark:border-primary/30 shadow-sm"
 					}`}
 				>
 					<View className="flex-row items-center justify-between">
@@ -400,6 +400,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
 								</Text>
 							</View>
 						</View>
+
 						<View className="flex-row gap-2">
 							<TouchableOpacity
 								onPress={handleMarkAsUsed}
@@ -434,8 +435,8 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
 					<View className="bg-card mt-2 rounded-2xl p-5 shadow-sm ">
 						<View className="flex-row items-center justify-between">
 							<View className="flex-row items-center flex-1 gap-2">
-								<View className="w-10 h-10 bg-brand-100 dark:bg-brand-950/50 rounded-full items-center justify-center">
-									<Package size={18} className="text-brand-500" />
+								<View className="w-10 h-10 bg-primary/10 dark:bg-primary/20 rounded-full items-center justify-center">
+									<Icon as={Package} size={18} className="text-primary" />
 								</View>
 								<View className="ml-3">
 									<Text className="text-foreground font-semibold text-base">
@@ -446,8 +447,8 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
 									</Text>
 								</View>
 							</View>
-							<View className="bg-brand-50 dark:bg-brand-950/30 rounded-full px-4 py-2">
-								<Text className="text-brand-600 dark:text-brand-400 font-bold text-lg">
+							<View className="bg-primary/10 dark:bg-primary/20 rounded-full px-4 py-2">
+								<Text className="text-primary dark:text-primary font-bold text-lg">
 									{product.quantity}
 								</Text>
 							</View>
@@ -461,7 +462,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
 						<View className="flex-row items-center justify-between">
 							<View className="flex-row items-center">
 								<View className="w-10 h-10 bg-blue-100 dark:bg-blue-950/50 rounded-full items-center justify-center">
-									<Info size={18} className="text-blue-500" />
+									<Icon as={Info} size={18} className="text-blue-500" />
 								</View>
 								<Text className="ml-3 text-foreground font-semibold text-base">
 									Notes
@@ -469,10 +470,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
 							</View>
 						</View>
 						<View className="rounded-xl p-2">
-							<Text
-								variant="block-quote"
-								className="text-muted-foreground text-xs leading-6"
-							>
+							<Text className="text-muted-foreground text-xs leading-6">
 								{product.notes}
 							</Text>
 						</View>

@@ -24,12 +24,21 @@ export default function TabsLayout() {
 			return { display: "none" as const };
 		}
 
+		// Enhanced Android edge-to-edge support
+		const androidPadding = Math.max(insets.bottom, 8); // Ensure minimum padding
+		const androidHeight = 60 + androidPadding;
+
 		return {
-			paddingBottom: Platform.OS === "ios" ? insets.bottom : 8,
-			height: Platform.OS === "ios" ? 80 + insets.bottom : 60,
+			paddingBottom: Platform.OS === "ios" ? insets.bottom : androidPadding,
+			height: Platform.OS === "ios" ? 80 + insets.bottom : androidHeight,
 			backgroundColor: currentTheme.background,
 			borderTopColor: currentTheme.border,
 			borderTopWidth: 0.5,
+			// Additional Android-specific styling for edge-to-edge
+			...(Platform.OS === "android" && {
+				paddingHorizontal: 4,
+				marginBottom: 0,
+			}),
 		};
 	}, [isCameraOpen, insets.bottom, currentTheme]);
 
