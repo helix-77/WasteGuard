@@ -195,9 +195,12 @@ export default forwardRef<ProductFormRef, ProductFormProps>(
 
 					{/* Category Field */}
 					<CategoryField
-						control={control}
-						error={errors.category}
+						value={watch("category")}
+						onValueChange={(value) =>
+							setValue("category", value, { shouldValidate: true })
+						}
 						isLoading={isLoading}
+						error={errors.category?.message}
 					/>
 
 					{/* Expiry Date Field */}

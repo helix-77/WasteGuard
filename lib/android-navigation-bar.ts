@@ -30,10 +30,8 @@ export async function configureEdgeToEdge(theme: "light" | "dark") {
 	if (Platform.OS !== "android") return;
 
 	try {
-		// Make navigation bar transparent for edge-to-edge
-		await NavigationBar.setBackgroundColorAsync("transparent");
-
-		// Set appropriate button style
+		// Only set button style for edge-to-edge compatibility
+		// Don't set background color when edge-to-edge is enabled
 		await NavigationBar.setButtonStyleAsync(
 			theme === "dark" ? "light" : "dark",
 		);

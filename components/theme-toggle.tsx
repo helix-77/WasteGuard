@@ -4,8 +4,8 @@ import { Image, type ImageStyle } from "react-native";
 import { Button } from "./ui/button";
 
 const THEME_TOGGLE_IMAGES = {
-	light: require("assets/theme-toggle-dark.png"),
-	dark: require("assets/theme-toggle-light.png"),
+	light: require("assets/theme-toggle-light.png"),
+	dark: require("assets/theme-toggle-dark.png"),
 };
 
 const IMAGE_STYLE: ImageStyle = {

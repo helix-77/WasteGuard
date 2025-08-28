@@ -25,7 +25,8 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = React.memo(
 						className="p-2 -ml-2"
 						activeOpacity={0.7}
 					>
-						<ChevronLeft
+						<Icon
+							as={ChevronLeft}
 							strokeWidth={2.5}
 							size={24}
 							className="text-foreground"

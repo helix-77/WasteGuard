@@ -157,7 +157,8 @@ export default function Product() {
 			product.category.toLowerCase().includes(searchQuery.toLowerCase());
 
 		const matchesCategory =
-			selectedCategory === "All" || product.category === selectedCategory;
+			selectedCategory === "All" ||
+			product.category.toLowerCase().includes(selectedCategory.toLowerCase());
 
 		return matchesSearch && matchesCategory;
 	});
@@ -354,7 +355,7 @@ export default function Product() {
 							contentContainerStyle={{ paddingHorizontal: 4 }}
 						>
 							{allCategories.map((category: string) => (
-								<Pressable
+								<TouchableOpacity
 									key={category}
 									onPress={() => setSelectedCategory(category)}
 									className={`mr-2 px-4 py-2 rounded-full ${
@@ -372,7 +373,7 @@ export default function Product() {
 									>
 										{category}
 									</Text>
-								</Pressable>
+								</TouchableOpacity>
 							))}
 						</ScrollView>
 					</View>
